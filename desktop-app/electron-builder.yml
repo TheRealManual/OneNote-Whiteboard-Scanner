@@ -1,0 +1,24 @@
+# Electron Builder Configuration
+# This file provides additional control over the build process
+
+# Explicitly disable code signing
+win:
+  sign: false
+  signDlls: false
+  verifyUpdateCodeSignature: false
+
+# NSIS configuration for full offline installer
+nsis:
+  oneClick: false
+  perMachine: true
+  allowToChangeInstallationDirectory: true
+  artifactName: "${productName}-Setup-${version}.${ext}"
+  # Disable 7z packaging to avoid mmap errors
+  useZip: false
+  packElevateHelper: false
+
+# Use normal compression instead of 7z to avoid mmap file size limits
+compression: normal
+
+# Force no code signing
+forceCodeSigning: false

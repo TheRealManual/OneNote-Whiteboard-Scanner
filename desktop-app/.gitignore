@@ -1,0 +1,8 @@
+# Desktop App
+node_modules/
+dist/
+renderer/app.bundle.js
+*.log
+
+# Electron
+out/

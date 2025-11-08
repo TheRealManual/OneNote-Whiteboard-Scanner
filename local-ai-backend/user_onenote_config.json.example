@@ -1,0 +1,14 @@
+{
+  "_comment": "This file is AUTO-GENERATED when you first connect to OneNote",
+  "_instructions": "DO NOT create this file manually - it will be created automatically!",
+  "_privacy": "This file contains YOUR personal OneNote access tokens",
+  "_security": "Never commit this file to git (already in .gitignore)",
+  
+  "access_token": "Generated automatically after Microsoft sign-in",
+  "refresh_token": "Generated automatically for long-term access",
+  "user_email": "your.email@example.com",
+  "notebook_id": "Generated when you select a notebook",
+  "notebook_name": "Your Notebook Name",
+  "section_id": "Generated when you select a section",
+  "section_name": "Your Section Name"
+}
