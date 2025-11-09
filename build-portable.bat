@@ -3,7 +3,6 @@ REM ============================================================
 REM OneNote Whiteboard Scanner - Portable Package Builder
 REM ============================================================
 REM Creates a portable folder with everything needed to run
-REM No installer needed - just extract and run!
 REM ============================================================
 
 setlocal EnableDelayedExpansion
