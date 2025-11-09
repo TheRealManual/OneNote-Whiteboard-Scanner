@@ -1,6 +1,6 @@
 # OneNote Whiteboard Scanner
 
-A Windows desktop application for digitizing whiteboard content using computer vision and AI. Captures images from a webcam, processes them locally, and outputs vector graphics that can be sent directly to OneNote notebooks.
+A Windows desktop application for digitizing whiteboard content using computer vision and AI. Captures images from a webcam, processes them locally, and outputs vector graphics and Ink Strokes that can be sent directly to OneNote notebooks.
 
 Version: 1.0
 License: MIT
