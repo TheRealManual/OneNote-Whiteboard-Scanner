@@ -1,14 +1,16 @@
 {
-  "resize_to": [960, 540],
-  "rectified_canvas": [1280, 720],
+  "resize_to": null,
+  "max_dimension": 2048,
+  "preserve_native_resolution": true,
+  "rectified_canvas": [1920, 1080],
   "preserve_aspect_ratio": true,
 
   "illumination": { 
     "enabled": true, 
-    "blur_sigma": 21,
+    "blur_sigma": 31,
     "clahe": true,
     "background_subtract": false,
-    "median_blur_size": 31
+    "median_blur_size": 51
   },
 
   "board_detect": {
@@ -20,18 +22,20 @@
   "stroke_extract": {
     "use_classical": true,
     "use_u2net": false,
+    "use_tile_segmentation": true,
+    "tile_size": 128,
     "u2net_backend": "auto",
     "u2net_threshold": 0.6,
     "color_hsv_masks": true,
-    "adaptive_block": 21,
-    "adaptive_c": 12,
+    "adaptive_block": 31,
+    "adaptive_c": 15,
     "auto_calibrate_threshold": false,
-    "canny": [70, 180],
+    "canny": [80, 200],
     "canny_structure_only": false,
-    "morph_open": 2,
+    "morph_open": 3,
     "morph_close": 4,
-    "min_area_px": 40,
-    "min_skel_len_px": 15
+    "min_area_px": 80,
+    "min_skel_len_px": 20
   },
 
   "vectorize": {

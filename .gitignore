@@ -21,6 +21,18 @@ Desktop.ini
 local-ai-backend/user_onenote_config.json
 local-ai-backend/onenote_config.json
 
+# Training data and models (moved to separate training repo)
+local-ai-backend/dataset/
+local-ai-backend/models/*.pt
+local-ai-backend/models/*.onnx
+local-ai-backend/models/training_history.json
+local-ai-backend/train_segmentation.py
+local-ai-backend/training_ui.py
+local-ai-backend/training_ui/
+local-ai-backend/ML_TRAINING_GUIDE.md
+TRAINING_UI_GUIDE.md
+start-training-ui.bat
+
 # Logs
 logs/
 *.log

@@ -1,7 +1,7 @@
 """
 Hybrid Stroke Extractor - Fast & Robust Whiteboard Processing
-Combines classical CV with tiny AI for 1-3 second processing
-Optimized for Intel Iris Xe Graphics with OpenVINO
+Combines classical CV with tile-aware lightweight segmentation
+Optimized for Intel Iris Xe Graphics with DirectML
 """
 
 import cv2
@@ -10,6 +10,7 @@ from typing import Optional, Tuple, List, Dict
 import logging
 from pathlib import Path
 import json
+import time
 
 # Optional AI imports
 try:
@@ -32,6 +33,13 @@ try:
     SKIMAGE_AVAILABLE = True
 except ImportError:
     SKIMAGE_AVAILABLE = False
+
+# Import tile segmentation
+try:
+    from .tile_segmentation import TileSegmentation
+    TILE_SEG_AVAILABLE = True
+except ImportError:
+    TILE_SEG_AVAILABLE = False
 
 logger = logging.getLogger(__name__)
 
@@ -66,14 +74,37 @@ else:
 
 
 class HybridStrokeExtractor:
-    """Fast hybrid stroke extraction using classical CV + optional tiny AI"""
+    """Fast hybrid stroke extraction using classical CV + tile-aware segmentation"""
     
     def __init__(self):
         self.u2net_session = None
+        self.tile_seg = None
         self.backend_type = None
         
+        # Initialize tile segmentation if enabled
+        if CONFIG['stroke_extract'].get('use_tile_segmentation', False):
+            self._init_tile_segmentation()
+        
+        # Legacy U2-Net support (deprecated in favor of tile segmentation)
         if CONFIG['stroke_extract'].get('use_u2net', False):
             self._init_u2net()
+    
+    def _init_tile_segmentation(self):
+        """Initialize tile-aware lightweight segmentation"""
+        if not TILE_SEG_AVAILABLE:
+            logger.warning("Tile segmentation module not available")
+            return
+        
+        try:
+            self.tile_seg = TileSegmentation()
+            if self.tile_seg.enabled:
+                self.backend_type = 'tile_segmentation'
+                logger.info("Tile-aware segmentation initialized (DeepLabV3-MobileNetV3 INT8)")
+            else:
+                logger.info("Tile segmentation model not found - using classical CV only")
+        except Exception as e:
+            logger.error(f"Failed to initialize tile segmentation: {e}")
+            self.tile_seg = None
     
     def _init_u2net(self):
         """Initialize U2-Net model with best available backend"""
@@ -193,15 +224,38 @@ class HybridStrokeExtractor:
         }
     
     def _normalize_image(self, img: np.ndarray) -> np.ndarray:
-        """Normalize image with white balance and illumination correction"""
+        """Normalize image with white balance and illumination correction.
+        Processes at native resolution unless exceeds max_dimension."""
         logger.info(f"Input to normalize: {img.shape}")
         
-        # Resize - CONFIG stores [width, height]
-        target_w, target_h = CONFIG['resize_to']
-        target_size = (target_w, target_h)  # cv2.resize wants (width, height)
-        logger.info(f"Target resize: {target_size} (W×H)")
-        img = cv2.resize(img, target_size)
-        logger.info(f"After resize: {img.shape} (H×W×C)")
+        # Check if we should resize (only if exceeds max dimension)
+        max_dim = CONFIG.get('max_dimension')
+        resize_to = CONFIG.get('resize_to')
+        
+        if resize_to is None and max_dim:
+            # Native resolution mode with optional max cap
+            h, w = img.shape[:2]
+            max_current = max(h, w)
+            
+            if max_current > max_dim:
+                scale = max_dim / max_current
+                new_w = int(w * scale)
+                new_h = int(h * scale)
+                logger.info(f"Downscaling from {w}x{h} to {new_w}x{new_h} (max_dim={max_dim})")
+                img = cv2.resize(img, (new_w, new_h), interpolation=cv2.INTER_AREA)
+            else:
+                logger.info(f"Keeping native resolution {w}x{h} (under max_dim={max_dim})")
+        elif resize_to:
+            # Legacy fixed resize mode
+            target_w, target_h = resize_to
+            target_size = (target_w, target_h)
+            logger.info(f"Target resize: {target_size} (W×H)")
+            img = cv2.resize(img, target_size)
+            logger.info(f"After resize: {img.shape} (H×W×C)")
+        else:
+            # No resizing at all - full native resolution
+            h, w = img.shape[:2]
+            logger.info(f"Processing at full native resolution: {w}x{h}")
         
         if not CONFIG['illumination']['enabled']:
             logger.info("Illumination correction disabled")
@@ -224,7 +278,7 @@ class HybridStrokeExtractor:
         logger.info("Applying illumination flattening...")
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         blur_sigma = CONFIG['illumination']['blur_sigma']
-        logger.info(f"Gaussian blur sigma: {blur_sigma} (increased for better flattening)")
+        logger.info(f"Gaussian blur sigma: {blur_sigma}")
         bg = cv2.GaussianBlur(gray, (0, 0), blur_sigma)
         flat = cv2.divide(gray, bg, scale=255)
         
@@ -241,7 +295,7 @@ class HybridStrokeExtractor:
         return img_flat
     
     def _detect_and_rectify(self, img: np.ndarray) -> Tuple[Optional[np.ndarray], Optional[np.ndarray]]:
-        """Detect whiteboard and rectify perspective"""
+        """Detect whiteboard and rectify perspective at native resolution"""
         logger.info(f"Detecting quad in image of size: {img.shape}")
         
         # Try contour-based quad detection first
@@ -255,8 +309,17 @@ class HybridStrokeExtractor:
         
         if quad is None:
             logger.info("No quad detected - using full image as whiteboard")
-            # Use full image dimensions but respect configured canvas aspect ratio
-            canvas_w, canvas_h = CONFIG['rectified_canvas']
+            
+            # Check if we should use fixed canvas or native resolution
+            rectified_canvas = CONFIG.get('rectified_canvas')
+            
+            if rectified_canvas is None:
+                # Native resolution mode - return image as-is
+                logger.info(f"Using native resolution: {img.shape[1]}x{img.shape[0]}")
+                return img, None
+            
+            # Legacy: use configured canvas aspect ratio
+            canvas_w, canvas_h = rectified_canvas
             logger.info(f"Configured canvas size: {canvas_w}×{canvas_h}")
             
             if CONFIG.get('preserve_aspect_ratio', True):
@@ -404,37 +467,55 @@ class HybridStrokeExtractor:
         return None
     
     def _extract_strokes_hybrid(self, img: np.ndarray) -> np.ndarray:
-        """Extract strokes using classical + optional AI"""
+        """Extract strokes using classical CV + optional tile-aware segmentation"""
         cfg = CONFIG['stroke_extract']
         
-        logger.info("Using classical stroke extraction...")
-        # Classical branch
-        classical_mask = self._extract_classical(img)
-        logger.info(f"Classical mask: {classical_mask.shape}, non-zero: {np.count_nonzero(classical_mask)}")
+        logger.info("Starting hybrid stroke extraction...")
+        start_time = time.time()
         
-        # AI branch (if enabled)
-        if cfg.get('use_u2net', False) and self.u2net_session:
+        # Step 1: Classical CV extraction (fast, always run)
+        logger.info("Running classical CV extraction...")
+        classical_start = time.time()
+        classical_mask = self._extract_classical(img)
+        classical_time = time.time() - classical_start
+        logger.info(f"Classical extraction: {np.count_nonzero(classical_mask)} pixels in {classical_time*1000:.0f}ms")
+        
+        # Step 2: Tile-aware segmentation refinement (if enabled)
+        if cfg.get('use_tile_segmentation', False) and self.tile_seg and self.tile_seg.enabled:
+            logger.info("Refining with tile-aware segmentation...")
+            tile_start = time.time()
+            
+            tile_size = cfg.get('tile_size', 128)
+            refined_mask = self.tile_seg.refine_mask(classical_mask, img, tile_size=tile_size)
+            
+            tile_time = time.time() - tile_start
+            logger.info(f"Tile segmentation: {np.count_nonzero(refined_mask)} pixels in {tile_time*1000:.0f}ms")
+            
+            final_mask = refined_mask
+        
+        # Step 3: Legacy U2-Net support (if tile segmentation not available)
+        elif cfg.get('use_u2net', False) and self.u2net_session:
             logger.info("Using U2-Net AI extraction...")
             ai_mask = self._extract_u2net(img)
             logger.info(f"AI mask: {ai_mask.shape}, non-zero: {np.count_nonzero(ai_mask)}")
-            # Fuse masks
-            fused = cv2.bitwise_or(classical_mask, ai_mask)
-            logger.info(f"Fused mask non-zero: {np.count_nonzero(fused)}")
+            final_mask = cv2.bitwise_or(classical_mask, ai_mask)
+        
         else:
-            logger.info("AI extraction disabled, using classical only")
-            fused = classical_mask
+            logger.info("No AI refinement - using classical only")
+            final_mask = classical_mask
         
-        # Clean up
-        logger.info("Cleaning mask...")
-        fused = self._clean_mask(fused)
+        # Step 4: Final cleanup
+        logger.info("Applying final cleanup...")
+        final_mask = self._clean_mask(final_mask)
         
-        # Additional refinement: smooth jaggies and remove random pixels
-        fused = cv2.medianBlur(fused, 3)
-        _, fused = cv2.threshold(fused, 127, 255, cv2.THRESH_BINARY)
+        # Smooth jaggies and remove noise
+        final_mask = cv2.medianBlur(final_mask, 3)
+        _, final_mask = cv2.threshold(final_mask, 127, 255, cv2.THRESH_BINARY)
         
-        logger.info(f"After cleaning: {np.count_nonzero(fused)} non-zero pixels")
+        total_time = time.time() - start_time
+        logger.info(f"Hybrid extraction complete: {np.count_nonzero(final_mask)} pixels in {total_time*1000:.0f}ms")
         
-        return fused
+        return final_mask
     
     def _extract_classical(self, img: np.ndarray) -> np.ndarray:
         """Classical CV stroke extraction with advanced techniques"""

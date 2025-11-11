@@ -544,16 +544,27 @@ function App() {
     console.log('startCamera function called');
     setCameraLoading(true);
     try {
-      console.log('Requesting camera access...');
+      console.log('Requesting camera access at maximum resolution...');
       const stream = await navigator.mediaDevices.getUserMedia({
-        video: { width: 1280, height: 720, facingMode: 'environment' }
+        video: { 
+          width: { ideal: 4096 },    // Request max available resolution
+          height: { ideal: 2160 },   // 4K if available
+          facingMode: 'environment'  // Use back camera if available
+        }
       });
       
       console.log('Camera stream obtained:', stream);
+      const track = stream.getVideoTracks()[0];
+      const settings = track.getSettings();
+      console.log(`Camera resolution: ${settings.width}x${settings.height}`);
+      
       streamRef.current = stream;
       setCameraActive(true);
       setCameraLoading(false);
-      setStatus({ message: 'Camera ready! Position your whiteboard and click Capture.', type: 'success' });
+      setStatus({ 
+        message: `Camera ready at ${settings.width}x${settings.height}! Position your whiteboard and click Capture.`, 
+        type: 'success' 
+      });
       console.log('Camera activated, state updated');
     } catch (error) {
       console.error('Camera error:', error);
