@@ -6,6 +6,8 @@ Version: 1.0
 License: MIT
 Platform: Windows
 
+Download Version 1.1 Pre-Release: [Download](https://github.com/TheRealManual/OneNote-Whiteboard-Scanner/releases/tag/Beta)
+
 ## Overview
 
 This application processes whiteboard photographs into clean, editable vector graphics. It uses a hybrid computer vision pipeline combining classical CV techniques with optional AI models for improved accuracy. All processing occurs locally on the user's machine.
