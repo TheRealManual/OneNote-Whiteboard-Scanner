@@ -7,18 +7,19 @@ win:
   signDlls: false
   verifyUpdateCodeSignature: false
 
-# NSIS configuration for full offline installer
+# NSIS configuration for installer
 nsis:
   oneClick: false
-  perMachine: true
+  perMachine: false
   allowToChangeInstallationDirectory: true
   artifactName: "${productName}-Setup-${version}.${ext}"
-  # Disable 7z packaging to avoid mmap errors
-  useZip: false
   packElevateHelper: false
 
-# Use normal compression instead of 7z to avoid mmap file size limits
-compression: normal
+# Use store (no compression) to avoid 7z memory issues with large backend
+compression: store
 
 # Force no code signing
 forceCodeSigning: false
+
+# Disable ASAR to avoid issues with Python backend
+asar: false

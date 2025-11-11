@@ -154,9 +154,13 @@ class HybridStrokeExtractor:
                 logger.error(f"Failed to load U2-Net: {e}")
                 CONFIG['stroke_extract']['use_u2net'] = False
     
-    def process_image(self, img: np.ndarray) -> Dict:
+    def process_image(self, img: np.ndarray, progress_callback=None) -> Dict:
         """
         Main processing pipeline
+        
+        Args:
+            img: Input image
+            progress_callback: Optional callback(progress_pct, details) for reporting progress
         
         Returns:
             Dict with 'strokes', 'mask', 'metadata'
@@ -177,7 +181,7 @@ class HybridStrokeExtractor:
         
         # Step 1: Ingest & Normalize
         logger.info("="*60)
-        logger.info("Step 1: Normalizing image...")
+        logger.info("Step 2: Normalizing image...")
         logger.info("="*60)
         normalized = self._normalize_image(img)
         logger.info(f"After normalization: {normalized.shape}")
@@ -195,7 +199,7 @@ class HybridStrokeExtractor:
         logger.info("Step 3: Extracting strokes...")
         logger.info("="*60)
         logger.info(f"Input to stroke extraction: {rectified.shape}")
-        stroke_mask = self._extract_strokes_hybrid(rectified)
+        stroke_mask = self._extract_strokes_hybrid(rectified, progress_callback=progress_callback)
         logger.info(f"Stroke mask shape: {stroke_mask.shape}")
         logger.info(f"Stroke mask dtype: {stroke_mask.dtype}")
         logger.info(f"Non-zero pixels in mask: {np.count_nonzero(stroke_mask)}")
@@ -466,7 +470,7 @@ class HybridStrokeExtractor:
         # Simplified implementation - would need full Hough line intersection logic
         return None
     
-    def _extract_strokes_hybrid(self, img: np.ndarray) -> np.ndarray:
+    def _extract_strokes_hybrid(self, img: np.ndarray, progress_callback=None) -> np.ndarray:
         """Extract strokes using classical CV + optional tile-aware segmentation"""
         cfg = CONFIG['stroke_extract']
         
@@ -486,7 +490,7 @@ class HybridStrokeExtractor:
             tile_start = time.time()
             
             tile_size = cfg.get('tile_size', 128)
-            refined_mask = self.tile_seg.refine_mask(classical_mask, img, tile_size=tile_size)
+            refined_mask = self.tile_seg.refine_mask(classical_mask, img, tile_size=tile_size, progress_callback=progress_callback)
             
             tile_time = time.time() - tile_start
             logger.info(f"Tile segmentation: {np.count_nonzero(refined_mask)} pixels in {tile_time*1000:.0f}ms")

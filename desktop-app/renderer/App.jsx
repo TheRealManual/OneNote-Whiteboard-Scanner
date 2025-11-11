@@ -6,9 +6,14 @@ const BACKEND_URL = 'http://127.0.0.1:5000';
 function App() {
   const [backendReady, setBackendReady] = useState(false);
   const [backendError, setBackendError] = useState(null);
+  const [backendProgress, setBackendProgress] = useState(0); // 0-100 for loading bar
+  const [backendStatus, setBackendStatus] = useState('Starting backend...'); // Status text
   const [cameraActive, setCameraActive] = useState(false);
   const [cameraLoading, setCameraLoading] = useState(false);
   const [processing, setProcessing] = useState(false);
+  const [processingProgress, setProcessingProgress] = useState(0); // Smoothed 0-100 for AI processing
+  const [targetProgress, setTargetProgress] = useState(0); // Target from backend
+  const [processingStep, setProcessingStep] = useState(''); // Current AI step
   const [result, setResult] = useState(null);
   const [status, setStatus] = useState({ message: '', type: 'info' });
   const [oneNoteAvailable, setOneNoteAvailable] = useState(false);
@@ -39,6 +44,19 @@ function App() {
     
     const checkBackend = async () => {
       try {
+        // Update progress bar (0-100%)
+        const progress = Math.min(100, (retryCount / maxRetries) * 100);
+        setBackendProgress(progress);
+        setBackendStatus(`Connecting to backend... (${retryCount + 1}/${maxRetries})`);
+        
+        // Update the HTML loader elements
+        const progressBar = document.getElementById('loader-progress');
+        const statusText = document.getElementById('loader-status');
+        const percentText = document.getElementById('loader-percent');
+        if (progressBar) progressBar.style.width = `${progress}%`;
+        if (statusText) statusText.textContent = `Connecting... (attempt ${retryCount + 1}/${maxRetries})`;
+        if (percentText) percentText.textContent = `${Math.round(progress)}%`;
+        
         const response = await fetch(`${BACKEND_URL}/health`, {
           signal: AbortSignal.timeout(5000) // 5 second timeout
         });
@@ -49,6 +67,8 @@ function App() {
         
         const data = await response.json();
         console.log('✓ Backend connected successfully!');
+        setBackendProgress(100);
+        setBackendStatus('Backend ready!');
         setBackendReady(true);
         setBackendError(null);
         setOneNoteAvailable(data.onenote_available || false);
@@ -71,6 +91,7 @@ function App() {
         } else {
           setBackendError('Backend failed to start after 60 seconds. Please restart the application.');
           setBackendReady(false);
+          setBackendProgress(0);
           
           // Hide initial loader and show error in React overlay
           const initialLoader = document.getElementById('initial-loader');
@@ -90,6 +111,38 @@ function App() {
       }
     };
   }, []);
+
+  // Smooth progress animation - interpolates between current and target progress
+  useEffect(() => {
+    if (!processing) return;
+
+    const animationInterval = setInterval(() => {
+      setProcessingProgress(current => {
+        const diff = targetProgress - current;
+        
+        // If very close to target, snap to it
+        if (Math.abs(diff) < 0.5) {
+          return Math.round(targetProgress);
+        }
+        
+        // If we're stuck waiting for backend (no target update), slowly increment
+        // This keeps the bar moving even during slow backend phases
+        if (diff === 0 && current < 99) {
+          // Very slow fake progress (0.3% per second) to show activity
+          return Math.min(current + 0.015, 99);
+        }
+        
+        // Smooth interpolation with faster easing in final phases (75%+)
+        // Final phases (stroke conversion, SVG, InkML) complete in milliseconds
+        // so we need faster animation to keep up
+        const easingRate = current >= 75 ? 0.4 : 0.15; // 40% in final stretch, 15% during tiles
+        const step = diff * easingRate;
+        return Math.round(current + step);
+      });
+    }, 50); // Update 20 times per second for smooth animation
+
+    return () => clearInterval(animationInterval);
+  }, [processing, targetProgress]);
 
   // Load OneNote configuration (auto-login on startup if previously authenticated)
   const loadOneNoteConfig = async () => {
@@ -639,6 +692,12 @@ function App() {
 
     setProcessing(true);
     setResult(null);
+    setProcessingProgress(0);
+    setTargetProgress(0);
+    setProcessingStep('Preparing image...');
+
+    let pollInterval = null;
+    let isProcessing = true; // Flag to control polling
 
     try {
       console.log('Creating blob from canvas...');
@@ -649,6 +708,28 @@ function App() {
       formData.append('file', blob, 'whiteboard.jpg');
 
       console.log('Sending request to backend...');
+      
+      // Start polling immediately (non-blocking)
+      console.log('[POLL] Starting progress polling...');
+      pollInterval = setInterval(() => {
+        if (!isProcessing) return; // Stop polling if processing is done
+        
+        fetch(`${BACKEND_URL}/progress`)
+          .then(response => response.json())
+          .then(progressData => {
+            console.log(`[POLL] Progress data:`, progressData);
+            if (progressData.active) {
+              console.log(`[POLL] Updating UI: ${progressData.progress}% - ${progressData.step}`);
+              setTargetProgress(progressData.progress); // Set target for smooth animation
+              setProcessingStep(progressData.step + (progressData.details ? ': ' + progressData.details : ''));
+            } else {
+              console.log(`[POLL] Progress not active, data:`, progressData);
+            }
+          })
+          .catch(err => console.warn('Progress poll failed:', err));
+      }, 200); // Poll every 200ms for smooth updates
+      
+      // Send POST request and wait for completion
       const response = await fetch(`${BACKEND_URL}/process-image`, {
         method: 'POST',
         body: formData
@@ -665,6 +746,13 @@ function App() {
       const data = await response.json();
       console.log('Processing complete, result:', data);
       
+      // Stop polling and set to 100%
+      isProcessing = false;
+      clearInterval(pollInterval);
+      setTargetProgress(100);
+      setProcessingProgress(100);
+      setProcessingStep('Complete!');
+      
       // Create preview image from SVG
       if (data.svg) {
         const svgBlob = new Blob([data.svg], { type: 'image/svg+xml' });
@@ -678,10 +766,17 @@ function App() {
         type: 'success' 
       });
     } catch (error) {
+      isProcessing = false;
+      clearInterval(pollInterval);
       console.error('Processing error:', error);
       setStatus({ message: `Processing failed: ${error.message}`, type: 'error' });
     } finally {
+      isProcessing = false;
+      clearInterval(pollInterval);
       setProcessing(false);
+      setProcessingProgress(0);
+      setTargetProgress(0);
+      setProcessingStep('');
     }
   };
 
@@ -909,8 +1004,14 @@ function App() {
             {/* Processing State */}
             {processing && (
               <div className="processing-overlay">
-                <div className="spinner"></div>
-                <p>Processing whiteboard with AI...</p>
+                <div className="processing-content">
+                  <div className="spinner"></div>
+                  <h3>{processingStep || 'Processing whiteboard with AI...'}</h3>
+                  <div className="progress-bar-container">
+                    <div className="progress-bar" style={{ width: `${processingProgress}%` }}></div>
+                  </div>
+                  <p className="progress-text">{Math.round(processingProgress)}% complete</p>
+                </div>
               </div>
             )}
 

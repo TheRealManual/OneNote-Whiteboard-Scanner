@@ -204,6 +204,47 @@ body {
   z-index: 100;
 }
 
+.processing-overlay .processing-content {
+  text-align: center;
+  max-width: 400px;
+  width: 90%;
+  padding: 30px;
+}
+
+.processing-overlay h3 {
+  margin: 20px 0 10px 0;
+  font-size: 20px;
+  font-weight: 500;
+  color: white;
+}
+
+.processing-overlay .progress-bar-container {
+  width: 100%;
+  height: 12px;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 10px;
+  overflow: hidden;
+  margin: 20px 0;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.processing-overlay .progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+  border-radius: 10px;
+  transition: width 0.3s ease;
+  box-shadow: 0 0 15px rgba(102, 126, 234, 0.8);
+  min-width: 5%;
+}
+
+.processing-overlay .progress-text {
+  color: rgba(255, 255, 255, 0.95);
+  font-size: 18px;
+  font-weight: 600;
+  margin-top: 10px;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
 .processing-overlay p {
   margin-top: 20px;
   font-size: 16px;
@@ -742,3 +783,54 @@ body {
   font-size: 20px;
 }
 
+/* Progress Bar Styles */
+.progress-bar-container {
+  width: 100%;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  overflow: hidden;
+  margin: 20px 0;
+}
+
+.progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+  border-radius: 10px;
+  transition: width 0.3s ease;
+  box-shadow: 0 0 10px rgba(102, 126, 234, 0.5);
+}
+
+.loading-icon {
+  font-size: 60px;
+  animation: bounce 1s infinite;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.loading-subtext {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 14px;
+  margin-top: 10px;
+}
+
+.processing-content {
+  text-align: center;
+  color: white;
+}
+
+.processing-content h3 {
+  margin: 20px 0 10px 0;
+  font-size: 20px;
+  font-weight: 500;
+}
+
+.progress-text {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 16px;
+  font-weight: 600;
+  margin-top: 10px;
+}

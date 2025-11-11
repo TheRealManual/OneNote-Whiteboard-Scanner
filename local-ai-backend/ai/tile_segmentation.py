@@ -194,13 +194,14 @@ class TileSegmentation:
         
         return False
     
-    def infer_tiles(self, img: np.ndarray, tiles: List[Tuple[int, int, int, int]]) -> np.ndarray:
+    def infer_tiles(self, img: np.ndarray, tiles: List[Tuple[int, int, int, int]], progress_callback=None) -> np.ndarray:
         """
         Run segmentation inference on uncertain tiles only
         
         Args:
             img: Original image (BGR)
             tiles: List of (x, y, w, h) tile coordinates
+            progress_callback: Optional callback(progress_pct, details) for reporting progress
         
         Returns:
             Full-resolution stroke mask (0=background, 255=stroke)
@@ -251,6 +252,15 @@ class TileSegmentation:
                     stroke_mask_resized
                 )
                 
+                # Report progress every tile (for smooth updates)
+                if progress_callback:
+                    # Progress from 20% to 75% based on tile completion (55% range for AI processing)
+                    progress_pct = 20 + int((idx + 1) / len(tiles) * 55)
+                    logger.info(f"[TILE PROGRESS] Calling callback with {progress_pct}% (tile {idx+1}/{len(tiles)})")
+                    progress_callback(progress_pct, f"Processing tile {idx + 1}/{len(tiles)}")
+                else:
+                    logger.warning(f"[TILE PROGRESS] No callback provided! Cannot report progress for tile {idx+1}")
+                
                 if (idx + 1) % 10 == 0:
                     logger.info(f"Processed {idx + 1}/{len(tiles)} tiles")
                 
@@ -264,7 +274,8 @@ class TileSegmentation:
     def refine_mask(self, 
                     classical_mask: np.ndarray, 
                     img: np.ndarray,
-                    tile_size: int = 128) -> np.ndarray:
+                    tile_size: int = 128,
+                    progress_callback=None) -> np.ndarray:
         """
         Refine classical CV mask using tile-based segmentation on uncertain regions
         
@@ -272,6 +283,7 @@ class TileSegmentation:
             classical_mask: Initial mask from classical CV pipeline
             img: Original image
             tile_size: Size of processing tiles (64, 128, or 256)
+            progress_callback: Optional callback(progress_pct, details) for reporting progress
         
         Returns:
             Refined stroke mask with ML-verified regions
@@ -288,7 +300,7 @@ class TileSegmentation:
             return classical_mask
         
         # Run ML on uncertain tiles only
-        ml_mask = self.infer_tiles(img, uncertain_tiles)
+        ml_mask = self.infer_tiles(img, uncertain_tiles, progress_callback=progress_callback)
         
         # Merge: Keep confident classical regions, replace uncertain with ML
         refined_mask = classical_mask.copy()

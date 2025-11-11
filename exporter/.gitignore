@@ -1,0 +1,22 @@
+# Build outputs
+dist/
+*.exe
+*.msi
+*.zip
+*.7z
+*.tar.gz
+
+# Build artifacts
+build/
+temp/
+*.log
+
+# Auto-update metadata
+latest.yml
+latest-mac.yml
+latest-linux.yml
+
+# Code signing
+*.pfx
+*.p12
+*.pem

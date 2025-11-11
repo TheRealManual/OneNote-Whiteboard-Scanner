@@ -1,0 +1,1281 @@
+2025-11-11 11:29:26,494 - __main__ - INFO - ============================================================
+2025-11-11 11:29:26,495 - __main__ - INFO - [PROCESS-IMAGE] Request received
+2025-11-11 11:29:26,495 - __main__ - INFO - ============================================================
+2025-11-11 11:29:26,495 - __main__ - INFO - [PROCESS-IMAGE] Progress cleared
+2025-11-11 11:29:26,495 - __main__ - INFO - Progress: 5% - Initializing - Starting image processing
+2025-11-11 11:29:26,496 - __main__ - INFO - [PROCESS-IMAGE] Progress updated to 5% - Initializing
+2025-11-11 11:29:26,496 - __main__ - INFO - Progress: 10% - Loading AI Models - Loading neural networks
+2025-11-11 11:29:36,053 - __main__ - INFO - Loading AI models (first-time initialization)...
+2025-11-11 11:29:36,481 - ai.tile_segmentation - INFO - Loaded PyTorch model: C:\Users\thelo\OneDrive\Desktop\Secondary Repos\OneNote-Whiteboard-Scanner\local-ai-backend\models\whiteboard_seg.pts
+2025-11-11 11:29:36,482 - ai.hybrid_extractor - INFO - Tile-aware segmentation initialized (DeepLabV3-MobileNetV3 INT8)
+2025-11-11 11:29:36,482 - __main__ - INFO - AI models loaded successfully
+2025-11-11 11:29:36,483 - __main__ - INFO - Progress: 20% - Reading Image - Decoding uploaded file
+Loaded PyTorch model: C:\Users\thelo\OneDrive\Desktop\Secondary Repos\OneNote-Whiteboard-Scanner\local-ai-backend\models\whiteboard_seg.pts on cpu
+INFO:     127.0.0.1:54075 - "GET /progress HTTP/1.1" 200 OK
+2025-11-11 11:29:36,598 - __main__ - INFO - Received image: (2160, 3840, 3)
+2025-11-11 11:29:36,599 - __main__ - INFO - Progress: 30% - AI Processing - Analyzing 3840x2160 image
+2025-11-11 11:29:36,600 - __main__ - INFO - Processing with Hybrid Extractor...
+2025-11-11 11:29:36,601 - ai.hybrid_extractor - INFO - ============================================================
+2025-11-11 11:29:36,601 - ai.hybrid_extractor - INFO - STARTING IMAGE PROCESSING PIPELINE
+2025-11-11 11:29:36,601 - ai.hybrid_extractor - INFO - ============================================================
+2025-11-11 11:29:36,602 - ai.hybrid_extractor - INFO - Input image shape: (2160, 3840, 3) (H×W×C)
+2025-11-11 11:29:36,603 - ai.hybrid_extractor - INFO - Input image dtype: uint8
+2025-11-11 11:29:36,603 - ai.hybrid_extractor - INFO - Input image size: 3840×2160
+2025-11-11 11:29:36,622 - ai.hybrid_extractor - INFO - Stored original image for color sampling
+2025-11-11 11:29:36,623 - ai.hybrid_extractor - INFO - ============================================================
+2025-11-11 11:29:36,623 - ai.hybrid_extractor - INFO - Step 2: Normalizing image...
+2025-11-11 11:29:36,624 - ai.hybrid_extractor - INFO - ============================================================
+2025-11-11 11:29:36,624 - ai.hybrid_extractor - INFO - Input to normalize: (2160, 3840, 3)
+2025-11-11 11:29:36,625 - ai.hybrid_extractor - INFO - Downscaling from 3840x2160 to 2048x1152 (max_dim=2048)
+2025-11-11 11:29:36,654 - ai.hybrid_extractor - INFO - Applying white balance (GrayWorld)...
+2025-11-11 11:29:36,675 - ai.hybrid_extractor - INFO - Channel averages - B: 105.0, G: 111.9, R: 121.5, Avg: 112.8
+2025-11-11 11:29:36,716 - ai.hybrid_extractor - INFO - White balance applied
+2025-11-11 11:29:36,717 - ai.hybrid_extractor - INFO - Applying illumination flattening...
+2025-11-11 11:29:36,719 - ai.hybrid_extractor - INFO - Gaussian blur sigma: 31
+2025-11-11 11:29:36,846 - ai.hybrid_extractor - INFO - Applying CLAHE histogram equalization...
+2025-11-11 11:29:36,864 - ai.hybrid_extractor - INFO - Illumination correction complete
+2025-11-11 11:29:36,867 - ai.hybrid_extractor - INFO - After normalization: (1152, 2048, 3)
+2025-11-11 11:29:36,867 - ai.hybrid_extractor - INFO - ============================================================
+2025-11-11 11:29:36,868 - ai.hybrid_extractor - INFO - Step 2: Detecting whiteboard...
+2025-11-11 11:29:36,868 - ai.hybrid_extractor - INFO - ============================================================
+2025-11-11 11:29:36,868 - ai.hybrid_extractor - INFO - Detecting quad in image of size: (1152, 2048, 3)
+2025-11-11 11:29:36,869 - ai.hybrid_extractor - INFO - Trying contour-based quad detection...
+2025-11-11 11:29:36,869 - ai.hybrid_extractor - INFO - Converting to grayscale and detecting edges...
+2025-11-11 11:29:36,883 - ai.hybrid_extractor - INFO - Edge pixels detected: 325415
+2025-11-11 11:29:36,886 - ai.hybrid_extractor - INFO - After dilation: 921129 edge pixels
+2025-11-11 11:29:36,897 - ai.hybrid_extractor - INFO - Found 372 contours
+2025-11-11 11:29:36,898 - ai.hybrid_extractor - INFO - Checking top 10 contours by area...
+2025-11-11 11:29:36,899 - ai.hybrid_extractor - INFO -   Contour 1: area=729056 (30.9% of image), perimeter=22285, vertices=6
+2025-11-11 11:29:36,900 - ai.hybrid_extractor - INFO -   Contour 2: area=101683 (4.3% of image), perimeter=10003, vertices=5
+2025-11-11 11:29:36,900 - ai.hybrid_extractor - INFO -   Contour 3: area=72775 (3.1% of image), perimeter=9364, vertices=3
+2025-11-11 11:29:36,901 - ai.hybrid_extractor - INFO -   Contour 4: area=15633 (0.7% of image), perimeter=3121, vertices=6
+2025-11-11 11:29:36,901 - ai.hybrid_extractor - INFO -   Contour 5: area=12104 (0.5% of image), perimeter=1623, vertices=6
+2025-11-11 11:29:36,902 - ai.hybrid_extractor - INFO -   Contour 6: area=11168 (0.5% of image), perimeter=2882, vertices=5
+2025-11-11 11:29:36,902 - ai.hybrid_extractor - INFO -   Contour 7: area=10566 (0.4% of image), perimeter=2441, vertices=2
+2025-11-11 11:29:36,902 - ai.hybrid_extractor - INFO -   Contour 8: area=10296 (0.4% of image), perimeter=2166, vertices=2
+2025-11-11 11:29:36,903 - ai.hybrid_extractor - INFO -   Contour 9: area=10119 (0.4% of image), perimeter=1508, vertices=8
+2025-11-11 11:29:36,903 - ai.hybrid_extractor - INFO -   Contour 10: area=9390 (0.4% of image), perimeter=1576, vertices=7
+2025-11-11 11:29:36,903 - ai.hybrid_extractor - INFO - No suitable quad found
+2025-11-11 11:29:36,903 - ai.hybrid_extractor - INFO - Contour detection failed, trying Hough lines...
+2025-11-11 11:29:36,904 - ai.hybrid_extractor - INFO - No quad detected - using full image as whiteboard
+2025-11-11 11:29:36,904 - ai.hybrid_extractor - INFO - Configured canvas size: 1920×1080
+2025-11-11 11:29:36,904 - ai.hybrid_extractor - INFO - Source aspect ratio: 1.778 (2048×1152)
+2025-11-11 11:29:36,904 - ai.hybrid_extractor - INFO - Target aspect ratio: 1.778 (1920×1080)
+2025-11-11 11:29:36,904 - ai.hybrid_extractor - INFO - Height constrained: (1920, 1080)
+2025-11-11 11:29:36,905 - ai.hybrid_extractor - INFO - Resizing from 2048×1152 to 1920×1080
+2025-11-11 11:29:36,907 - ai.hybrid_extractor - INFO - ✓ Resized to (1920, 1080) (aspect preserved)
+2025-11-11 11:29:36,907 - ai.hybrid_extractor - INFO - After rectification: (1080, 1920, 3)
+2025-11-11 11:29:36,908 - ai.hybrid_extractor - INFO - Transform matrix: None (used resize)
+2025-11-11 11:29:36,908 - ai.hybrid_extractor - INFO - ============================================================
+2025-11-11 11:29:36,908 - ai.hybrid_extractor - INFO - Step 3: Extracting strokes...
+2025-11-11 11:29:36,908 - ai.hybrid_extractor - INFO - ============================================================
+2025-11-11 11:29:36,909 - ai.hybrid_extractor - INFO - Input to stroke extraction: (1080, 1920, 3)
+2025-11-11 11:29:36,909 - ai.hybrid_extractor - INFO - Starting hybrid stroke extraction...
+2025-11-11 11:29:36,909 - ai.hybrid_extractor - INFO - Running classical CV extraction...
+2025-11-11 11:29:36,911 - ai.hybrid_extractor - INFO - Denoising with fastNlMeansDenoising...
+2025-11-11 11:29:37,774 - ai.hybrid_extractor - INFO - Adaptive threshold: block_size=31, c=15
+2025-11-11 11:29:37,809 - ai.hybrid_extractor - INFO - Canny edges: [80, 200]
+2025-11-11 11:29:37,810 - ai.hybrid_extractor - INFO - Extracting colored markers (HSV)...
+2025-11-11 11:29:37,830 - ai.hybrid_extractor - INFO - Color mask pixels: 1440
+2025-11-11 11:29:37,831 - ai.hybrid_extractor - INFO - Combining: Adaptive threshold OR Canny OR Colors...
+2025-11-11 11:29:37,832 - ai.hybrid_extractor - INFO - Combined mask pixels: 666108
+2025-11-11 11:29:37,833 - ai.hybrid_extractor - INFO - Classical extraction: 666108 pixels in 923ms
+2025-11-11 11:29:37,834 - ai.hybrid_extractor - INFO - Refining with tile-aware segmentation...
+2025-11-11 11:29:37,942 - ai.tile_segmentation - INFO - Found 95 uncertain tiles (size=128x128)
+2025-11-11 11:29:37,942 - ai.tile_segmentation - INFO - Processing 95 tiles with DeepLabV3-MobileNetV3 INT8...
+2025-11-11 11:29:38,790 - ai.tile_segmentation - INFO - [TILE PROGRESS] Calling callback with 30% (tile 1/95)
+2025-11-11 11:29:38,790 - __main__ - INFO - [TILE CALLBACK] 30% - Processing tile 1/95
+2025-11-11 11:29:38,791 - __main__ - INFO - Progress: 30% - AI Processing - Processing tile 1/95
+2025-11-11 11:29:39,326 - ai.tile_segmentation - INFO - [TILE PROGRESS] Calling callback with 30% (tile 2/95)
+2025-11-11 11:29:39,326 - __main__ - INFO - [TILE CALLBACK] 30% - Processing tile 2/95
+2025-11-11 11:29:39,327 - __main__ - INFO - Progress: 30% - AI Processing - Processing tile 2/95
+2025-11-11 11:29:39,594 - ai.tile_segmentation - INFO - [TILE PROGRESS] Calling callback with 30% (tile 3/95)
+2025-11-11 11:29:39,595 - __main__ - INFO - [TILE CALLBACK] 30% - Processing tile 3/95
+2025-11-11 11:29:39,595 - __main__ - INFO - Progress: 30% - AI Processing - Processing tile 3/95
+2025-11-11 11:29:39,855 - ai.tile_segmentation - INFO - [TILE PROGRESS] Calling callback with 31% (tile 4/95)
+2025-11-11 11:29:39,855 - __main__ - INFO - [TILE CALLBACK] 31% - Processing tile 4/95
+2025-11-11 11:29:39,856 - __main__ - INFO - Progress: 31% - AI Processing - Processing tile 4/95
+2025-11-11 11:29:40,126 - ai.tile_segmentation - INFO - [TILE PROGRESS] Calling callback with 31% (tile 5/95)
+2025-11-11 11:29:40,127 - __main__ - INFO - [TILE CALLBACK] 31% - Processing tile 5/95
+2025-11-11 11:29:40,127 - __main__ - INFO - Progress: 31% - AI Processing - Processing tile 5/95
+2025-11-11 11:29:40,398 - ai.tile_segmentation - INFO - [TILE PROGRESS] Calling callback with 31% (tile 6/95)
+2025-11-11 11:29:40,399 - __main__ - INFO - [TILE CALLBACK] 31% - Processing tile 6/95
+2025-11-11 11:29:40,399 - __main__ - INFO - Progress: 31% - AI Processing - Processing tile 6/95
+2025-11-11 11:29:40,652 - ai.tile_segmentation - INFO - [TILE PROGRESS] Calling callback with 32% (tile 7/95)
+2025-11-11 11:29:40,653 - __main__ - INFO - [TILE CALLBACK] 32% - Processing tile 7/95
+2025-11-11 11:29:40,653 - __main__ - INFO - Progress: 32% - AI Processing - Processing tile 7/95
+2025-11-11 11:29:40,916 - ai.tile_segmentation - INFO - [TILE PROGRESS] Calling callback with 32% (tile 8/95)
+2025-11-11 11:29:40,917 - __main__ - INFO - [TILE CALLBACK] 32% - Processing tile 8/95
+2025-11-11 11:29:40,917 - __main__ - INFO - Progress: 32% - AI Processing - Processing tile 8/95
+2025-11-11 11:29:41,186 - ai.tile_segmentation - INFO - [TILE PROGRESS] Calling callback with 32% (tile 9/95)
+2025-11-11 11:29:41,187 - __main__ - INFO - [TILE CALLBACK] 32% - Processing tile 9/95
+2025-11-11 11:29:41,187 - __main__ - INFO - Progress: 32% - AI Processing - Processing tile 9/95
+2025-11-11 11:29:41,470 - ai.tile_segmentation - INFO - [TILE PROGRESS] Calling callback with 33% (tile 10/95)
+2025-11-11 11:29:41,471 - __main__ - INFO - [TILE CALLBACK] 33% - Processing tile 10/95
+2025-11-11 11:29:41,471 - __main__ - INFO - Progress: 33% - AI Processing - Processing tile 10/95
+2025-11-11 11:29:41,471 - ai.tile_segmentation - INFO - Processed 10/95 tiles
+2025-11-11 11:29:41,775 - ai.tile_segmentation - INFO - [TILE PROGRESS] Calling callback with 33% (tile 11/95)
+2025-11-11 11:29:41,775 - __main__ - INFO - [TILE CALLBACK] 33% - Processing tile 11/95
+2025-11-11 11:29:41,775 - __main__ - INFO - Progress: 33% - AI Processing - Processing tile 11/95
+2025-11-11 11:29:42,023 - ai.tile_segmentation - INFO - [TILE PROGRESS] Calling callback with 33% (tile 12/95)
+2025-11-11 11:29:42,023 - __main__ - INFO - [TILE CALLBACK] 33% - Processing tile 12/95
+2025-11-11 11:29:42,023 - __main__ - INFO - Progress: 33% - AI Processing - Processing tile 12/95
+2025-11-11 11:29:42,300 - ai.tile_segmentation - INFO - [TILE PROGRESS] Calling callback with 34% (tile 13/95)
+2025-11-11 11:29:42,301 - __main__ - INFO - [TILE CALLBACK] 34% - Processing tile 13/95
+2025-11-11 11:29:42,301 - __main__ - INFO - Progress: 34% - AI Processing - Processing tile 13/95
+2025-11-11 11:29:42,570 - ai.tile_segmentation - INFO - [TILE PROGRESS] Calling callback with 34% (tile 14/95)
+2025-11-11 11:29:42,570 - __main__ - INFO - [TILE CALLBACK] 34% - Processing tile 14/95
+2025-11-11 11:29:42,571 - __main__ - INFO - Progress: 34% - AI Processing - Processing tile 14/95
+2025-11-11 11:29:42,855 - ai.tile_segmentation - INFO - [TILE PROGRESS] Calling callback with 34% (tile 15/95)
+2025-11-11 11:29:42,855 - __main__ - INFO - [TILE CALLBACK] 34% - Processing tile 15/95
+2025-11-11 11:29:42,856 - __main__ - INFO - Progress: 34% - AI Processing - Processing tile 15/95
+2025-11-11 11:29:43,119 - ai.tile_segmentation - INFO - [TILE PROGRESS] Calling callback with 35% (tile 16/95)
+2025-11-11 11:29:43,120 - __main__ - INFO - [TILE CALLBACK] 35% - Processing tile 16/95
+2025-11-11 11:29:43,120 - __main__ - INFO - Progress: 35% - AI Processing - Processing tile 16/95
+2025-11-11 11:29:43,439 - ai.tile_segmentation - INFO - [TILE PROGRESS] Calling callback with 35% (tile 17/95)
+2025-11-11 11:29:43,440 - __main__ - INFO - [TILE CALLBACK] 35% - Processing tile 17/95
+2025-11-11 11:29:43,441 - __main__ - INFO - Progress: 35% - AI Processing - Processing tile 17/95
+2025-11-11 11:29:44,003 - ai.tile_segmentation - INFO - [TILE PROGRESS] Calling callback with 35% (tile 18/95)
+2025-11-11 11:29:44,004 - __main__ - INFO - [TILE CALLBACK] 35% - Processing tile 18/95
+2025-11-11 11:29:44,005 - __main__ - INFO - Progress: 35% - AI Processing - Processing tile 18/95
+2025-11-11 11:29:44,591 - ai.tile_segmentation - INFO - [TILE PROGRESS] Calling callback with 36% (tile 19/95)
+2025-11-11 11:29:44,591 - __main__ - INFO - [TILE CALLBACK] 36% - Processing tile 19/95
+2025-11-11 11:29:44,592 - __main__ - INFO - Progress: 36% - AI Processing - Processing tile 19/95
+2025-11-11 11:29:44,896 - ai.tile_segmentation - INFO - [TILE PROGRESS] Calling callback with 36% (tile 20/95)
+2025-11-11 11:29:44,897 - __main__ - INFO - [TILE CALLBACK] 36% - Processing tile 20/95
+2025-11-11 11:29:44,897 - __main__ - INFO - Progress: 36% - AI Processing - Processing tile 20/95
+2025-11-11 11:29:44,898 - ai.tile_segmentation - INFO - Processed 20/95 tiles
+2025-11-11 11:29:45,177 - ai.tile_segmentation - INFO - [TILE PROGRESS] Calling callback with 36% (tile 21/95)
+2025-11-11 11:29:45,178 - __main__ - INFO - [TILE CALLBACK] 36% - Processing tile 21/95
+2025-11-11 11:29:45,178 - __main__ - INFO - Progress: 36% - AI Processing - Processing tile 21/95
+2025-11-11 11:29:45,445 - ai.tile_segmentation - INFO - [TILE PROGRESS] Calling callback with 36% (tile 22/95)
+2025-11-11 11:29:45,445 - __main__ - INFO - [TILE CALLBACK] 36% - Processing tile 22/95
+2025-11-11 11:29:45,445 - __main__ - INFO - Progress: 36% - AI Processing - Processing tile 22/95
+2025-11-11 11:29:45,693 - ai.tile_segmentation - INFO - [TILE PROGRESS] Calling callback with 37% (tile 23/95)
+2025-11-11 11:29:45,694 - __main__ - INFO - [TILE CALLBACK] 37% - Processing tile 23/95
+2025-11-11 11:29:45,694 - __main__ - INFO - Progress: 37% - AI Processing - Processing tile 23/95
+2025-11-11 11:29:45,943 - ai.tile_segmentation - INFO - [TILE PROGRESS] Calling callback with 37% (tile 24/95)
+2025-11-11 11:29:45,943 - __main__ - INFO - [TILE CALLBACK] 37% - Processing tile 24/95
+2025-11-11 11:29:45,944 - __main__ - INFO - Progress: 37% - AI Processing - Processing tile 24/95
+2025-11-11 11:29:46,198 - ai.tile_segmentation - INFO - [TILE PROGRESS] Calling callback with 37% (tile 25/95)
+2025-11-11 11:29:46,198 - __main__ - INFO - [TILE CALLBACK] 37% - Processing tile 25/95
+2025-11-11 11:29:46,199 - __main__ - INFO - Progress: 37% - AI Processing - Processing tile 25/95
+2025-11-11 11:29:46,443 - ai.tile_segmentation - INFO - [TILE PROGRESS] Calling callback with 38% (tile 26/95)
+2025-11-11 11:29:46,444 - __main__ - INFO - [TILE CALLBACK] 38% - Processing tile 26/95
+2025-11-11 11:29:46,444 - __main__ - INFO - Progress: 38% - AI Processing - Processing tile 26/95
+2025-11-11 11:29:46,706 - ai.tile_segmentation - INFO - [TILE PROGRESS] Calling callback with 38% (tile 27/95)
+2025-11-11 11:29:46,707 - __main__ - INFO - [TILE CALLBACK] 38% - Processing tile 27/95
+2025-11-11 11:29:46,707 - __main__ - INFO - Progress: 38% - AI Processing - Processing tile 27/95
+2025-11-11 11:29:46,962 - ai.tile_segmentation - INFO - [TILE PROGRESS] Calling callback with 38% (tile 28/95)
+2025-11-11 11:29:46,962 - __main__ - INFO - [TILE CALLBACK] 38% - Processing tile 28/95
+2025-11-11 11:29:46,963 - __main__ - INFO - Progress: 38% - AI Processing - Processing tile 28/95
+2025-11-11 11:29:47,221 - ai.tile_segmentation - INFO - [TILE PROGRESS] Calling callback with 39% (tile 29/95)
+2025-11-11 11:29:47,222 - __main__ - INFO - [TILE CALLBACK] 39% - Processing tile 29/95
+2025-11-11 11:29:47,222 - __main__ - INFO - Progress: 39% - AI Processing - Processing tile 29/95
+2025-11-11 11:29:47,505 - ai.tile_segmentation - INFO - [TILE PROGRESS] Calling callback with 39% (tile 30/95)
+2025-11-11 11:29:47,506 - __main__ - INFO - [TILE CALLBACK] 39% - Processing tile 30/95
+2025-11-11 11:29:47,506 - __main__ - INFO - Progress: 39% - AI Processing - Processing tile 30/95
+2025-11-11 11:29:47,506 - ai.tile_segmentation - INFO - Processed 30/95 tiles
+2025-11-11 11:29:47,789 - ai.tile_segmentation - INFO - [TILE PROGRESS] Calling callback with 39% (tile 31/95)
+2025-11-11 11:29:47,790 - __main__ - INFO - [TILE CALLBACK] 39% - Processing tile 31/95
+2025-11-11 11:29:47,790 - __main__ - INFO - Progress: 39% - AI Processing - Processing tile 31/95
+2025-11-11 11:29:48,080 - ai.tile_segmentation - INFO - [TILE PROGRESS] Calling callback with 40% (tile 32/95)
+2025-11-11 11:29:48,081 - __main__ - INFO - [TILE CALLBACK] 40% - Processing tile 32/95
+2025-11-11 11:29:48,081 - __main__ - INFO - Progress: 40% - AI Processing - Processing tile 32/95
+2025-11-11 11:29:48,344 - ai.tile_segmentation - INFO - [TILE PROGRESS] Calling callback with 40% (tile 33/95)
+2025-11-11 11:29:48,344 - __main__ - INFO - [TILE CALLBACK] 40% - Processing tile 33/95
+2025-11-11 11:29:48,345 - __main__ - INFO - Progress: 40% - AI Processing - Processing tile 33/95
+2025-11-11 11:29:48,618 - ai.tile_segmentation - INFO - [TILE PROGRESS] Calling callback with 40% (tile 34/95)
+2025-11-11 11:29:48,618 - __main__ - INFO - [TILE CALLBACK] 40% - Processing tile 34/95
+2025-11-11 11:29:48,619 - __main__ - INFO - Progress: 40% - AI Processing - Processing tile 34/95
+2025-11-11 11:29:48,892 - ai.tile_segmentation - INFO - [TILE PROGRESS] Calling callback with 41% (tile 35/95)
+2025-11-11 11:29:48,892 - __main__ - INFO - [TILE CALLBACK] 41% - Processing tile 35/95
+2025-11-11 11:29:48,892 - __main__ - INFO - Progress: 41% - AI Processing - Processing tile 35/95
+2025-11-11 11:29:49,172 - ai.tile_segmentation - INFO - [TILE PROGRESS] Calling callback with 41% (tile 36/95)
+2025-11-11 11:29:49,172 - __main__ - INFO - [TILE CALLBACK] 41% - Processing tile 36/95
+2025-11-11 11:29:49,173 - __main__ - INFO - Progress: 41% - AI Processing - Processing tile 36/95
+2025-11-11 11:29:49,436 - ai.tile_segmentation - INFO - [TILE PROGRESS] Calling callback with 41% (tile 37/95)
+2025-11-11 11:29:49,436 - __main__ - INFO - [TILE CALLBACK] 41% - Processing tile 37/95
+2025-11-11 11:29:49,437 - __main__ - INFO - Progress: 41% - AI Processing - Processing tile 37/95
+2025-11-11 11:29:49,713 - ai.tile_segmentation - INFO - [TILE PROGRESS] Calling callback with 42% (tile 38/95)
+2025-11-11 11:29:49,714 - __main__ - INFO - [TILE CALLBACK] 42% - Processing tile 38/95
+2025-11-11 11:29:49,714 - __main__ - INFO - Progress: 42% - AI Processing - Processing tile 38/95
+2025-11-11 11:29:49,995 - ai.tile_segmentation - INFO - [TILE PROGRESS] Calling callback with 42% (tile 39/95)
+2025-11-11 11:29:49,995 - __main__ - INFO - [TILE CALLBACK] 42% - Processing tile 39/95
+2025-11-11 11:29:49,996 - __main__ - INFO - Progress: 42% - AI Processing - Processing tile 39/95
+2025-11-11 11:29:50,252 - ai.tile_segmentation - INFO - [TILE PROGRESS] Calling callback with 42% (tile 40/95)
+2025-11-11 11:29:50,253 - __main__ - INFO - [TILE CALLBACK] 42% - Processing tile 40/95
+2025-11-11 11:29:50,253 - __main__ - INFO - Progress: 42% - AI Processing - Processing tile 40/95
+2025-11-11 11:29:50,254 - ai.tile_segmentation - INFO - Processed 40/95 tiles
+2025-11-11 11:29:50,513 - ai.tile_segmentation - INFO - [TILE PROGRESS] Calling callback with 42% (tile 41/95)
+2025-11-11 11:29:50,513 - __main__ - INFO - [TILE CALLBACK] 42% - Processing tile 41/95
+2025-11-11 11:29:50,513 - __main__ - INFO - Progress: 42% - AI Processing - Processing tile 41/95
+2025-11-11 11:29:50,775 - ai.tile_segmentation - INFO - [TILE PROGRESS] Calling callback with 43% (tile 42/95)
+2025-11-11 11:29:50,776 - __main__ - INFO - [TILE CALLBACK] 43% - Processing tile 42/95
+2025-11-11 11:29:50,776 - __main__ - INFO - Progress: 43% - AI Processing - Processing tile 42/95
+2025-11-11 11:29:51,052 - ai.tile_segmentation - INFO - [TILE PROGRESS] Calling callback with 43% (tile 43/95)
+2025-11-11 11:29:51,052 - __main__ - INFO - [TILE CALLBACK] 43% - Processing tile 43/95
+2025-11-11 11:29:51,053 - __main__ - INFO - Progress: 43% - AI Processing - Processing tile 43/95
+2025-11-11 11:29:51,320 - ai.tile_segmentation - INFO - [TILE PROGRESS] Calling callback with 43% (tile 44/95)
+2025-11-11 11:29:51,321 - __main__ - INFO - [TILE CALLBACK] 43% - Processing tile 44/95
+2025-11-11 11:29:51,321 - __main__ - INFO - Progress: 43% - AI Processing - Processing tile 44/95
+2025-11-11 11:29:51,578 - ai.tile_segmentation - INFO - [TILE PROGRESS] Calling callback with 44% (tile 45/95)
+2025-11-11 11:29:51,578 - __main__ - INFO - [TILE CALLBACK] 44% - Processing tile 45/95
+2025-11-11 11:29:51,579 - __main__ - INFO - Progress: 44% - AI Processing - Processing tile 45/95
+2025-11-11 11:29:51,862 - ai.tile_segmentation - INFO - [TILE PROGRESS] Calling callback with 44% (tile 46/95)
+2025-11-11 11:29:51,863 - __main__ - INFO - [TILE CALLBACK] 44% - Processing tile 46/95
+2025-11-11 11:29:51,863 - __main__ - INFO - Progress: 44% - AI Processing - Processing tile 46/95
+2025-11-11 11:29:52,136 - ai.tile_segmentation - INFO - [TILE PROGRESS] Calling callback with 44% (tile 47/95)
+2025-11-11 11:29:52,136 - __main__ - INFO - [TILE CALLBACK] 44% - Processing tile 47/95
+2025-11-11 11:29:52,137 - __main__ - INFO - Progress: 44% - AI Processing - Processing tile 47/95
+2025-11-11 11:29:52,410 - ai.tile_segmentation - INFO - [TILE PROGRESS] Calling callback with 45% (tile 48/95)
+2025-11-11 11:29:52,411 - __main__ - INFO - [TILE CALLBACK] 45% - Processing tile 48/95
+2025-11-11 11:29:52,411 - __main__ - INFO - Progress: 45% - AI Processing - Processing tile 48/95
+2025-11-11 11:29:52,664 - ai.tile_segmentation - INFO - [TILE PROGRESS] Calling callback with 45% (tile 49/95)
+2025-11-11 11:29:52,664 - __main__ - INFO - [TILE CALLBACK] 45% - Processing tile 49/95
+2025-11-11 11:29:52,665 - __main__ - INFO - Progress: 45% - AI Processing - Processing tile 49/95
+2025-11-11 11:29:52,926 - ai.tile_segmentation - INFO - [TILE PROGRESS] Calling callback with 45% (tile 50/95)
+2025-11-11 11:29:52,927 - __main__ - INFO - [TILE CALLBACK] 45% - Processing tile 50/95
+2025-11-11 11:29:52,927 - __main__ - INFO - Progress: 45% - AI Processing - Processing tile 50/95
+2025-11-11 11:29:52,927 - ai.tile_segmentation - INFO - Processed 50/95 tiles
+2025-11-11 11:29:53,196 - ai.tile_segmentation - INFO - [TILE PROGRESS] Calling callback with 46% (tile 51/95)
+2025-11-11 11:29:53,196 - __main__ - INFO - [TILE CALLBACK] 46% - Processing tile 51/95
+2025-11-11 11:29:53,197 - __main__ - INFO - Progress: 46% - AI Processing - Processing tile 51/95
+2025-11-11 11:29:53,468 - ai.tile_segmentation - INFO - [TILE PROGRESS] Calling callback with 46% (tile 52/95)
+2025-11-11 11:29:53,469 - __main__ - INFO - [TILE CALLBACK] 46% - Processing tile 52/95
+2025-11-11 11:29:53,469 - __main__ - INFO - Progress: 46% - AI Processing - Processing tile 52/95
+2025-11-11 11:29:53,728 - ai.tile_segmentation - INFO - [TILE PROGRESS] Calling callback with 46% (tile 53/95)
+2025-11-11 11:29:53,728 - __main__ - INFO - [TILE CALLBACK] 46% - Processing tile 53/95
+2025-11-11 11:29:53,728 - __main__ - INFO - Progress: 46% - AI Processing - Processing tile 53/95
+2025-11-11 11:29:54,009 - ai.tile_segmentation - INFO - [TILE PROGRESS] Calling callback with 47% (tile 54/95)
+2025-11-11 11:29:54,010 - __main__ - INFO - [TILE CALLBACK] 47% - Processing tile 54/95
+2025-11-11 11:29:54,010 - __main__ - INFO - Progress: 47% - AI Processing - Processing tile 54/95
+2025-11-11 11:29:54,273 - ai.tile_segmentation - INFO - [TILE PROGRESS] Calling callback with 47% (tile 55/95)
+2025-11-11 11:29:54,274 - __main__ - INFO - [TILE CALLBACK] 47% - Processing tile 55/95
+2025-11-11 11:29:54,275 - __main__ - INFO - Progress: 47% - AI Processing - Processing tile 55/95
+2025-11-11 11:29:54,555 - ai.tile_segmentation - INFO - [TILE PROGRESS] Calling callback with 47% (tile 56/95)
+2025-11-11 11:29:54,556 - __main__ - INFO - [TILE CALLBACK] 47% - Processing tile 56/95
+2025-11-11 11:29:54,556 - __main__ - INFO - Progress: 47% - AI Processing - Processing tile 56/95
+2025-11-11 11:29:54,816 - ai.tile_segmentation - INFO - [TILE PROGRESS] Calling callback with 48% (tile 57/95)
+2025-11-11 11:29:54,816 - __main__ - INFO - [TILE CALLBACK] 48% - Processing tile 57/95
+2025-11-11 11:29:54,817 - __main__ - INFO - Progress: 48% - AI Processing - Processing tile 57/95
+2025-11-11 11:29:55,084 - ai.tile_segmentation - INFO - [TILE PROGRESS] Calling callback with 48% (tile 58/95)
+2025-11-11 11:29:55,084 - __main__ - INFO - [TILE CALLBACK] 48% - Processing tile 58/95
+2025-11-11 11:29:55,085 - __main__ - INFO - Progress: 48% - AI Processing - Processing tile 58/95
+2025-11-11 11:29:55,354 - ai.tile_segmentation - INFO - [TILE PROGRESS] Calling callback with 48% (tile 59/95)
+2025-11-11 11:29:55,354 - __main__ - INFO - [TILE CALLBACK] 48% - Processing tile 59/95
+2025-11-11 11:29:55,354 - __main__ - INFO - Progress: 48% - AI Processing - Processing tile 59/95
+2025-11-11 11:29:55,642 - ai.tile_segmentation - INFO - [TILE PROGRESS] Calling callback with 48% (tile 60/95)
+2025-11-11 11:29:55,643 - __main__ - INFO - [TILE CALLBACK] 48% - Processing tile 60/95
+2025-11-11 11:29:55,643 - __main__ - INFO - Progress: 48% - AI Processing - Processing tile 60/95
+2025-11-11 11:29:55,643 - ai.tile_segmentation - INFO - Processed 60/95 tiles
+2025-11-11 11:29:55,894 - ai.tile_segmentation - INFO - [TILE PROGRESS] Calling callback with 49% (tile 61/95)
+2025-11-11 11:29:55,895 - __main__ - INFO - [TILE CALLBACK] 49% - Processing tile 61/95
+2025-11-11 11:29:55,895 - __main__ - INFO - Progress: 49% - AI Processing - Processing tile 61/95
+2025-11-11 11:29:56,189 - ai.tile_segmentation - INFO - [TILE PROGRESS] Calling callback with 49% (tile 62/95)
+2025-11-11 11:29:56,190 - __main__ - INFO - [TILE CALLBACK] 49% - Processing tile 62/95
+2025-11-11 11:29:56,190 - __main__ - INFO - Progress: 49% - AI Processing - Processing tile 62/95
+2025-11-11 11:29:56,463 - ai.tile_segmentation - INFO - [TILE PROGRESS] Calling callback with 49% (tile 63/95)
+2025-11-11 11:29:56,464 - __main__ - INFO - [TILE CALLBACK] 49% - Processing tile 63/95
+2025-11-11 11:29:56,464 - __main__ - INFO - Progress: 49% - AI Processing - Processing tile 63/95
+2025-11-11 11:29:56,723 - ai.tile_segmentation - INFO - [TILE PROGRESS] Calling callback with 50% (tile 64/95)
+2025-11-11 11:29:56,724 - __main__ - INFO - [TILE CALLBACK] 50% - Processing tile 64/95
+2025-11-11 11:29:56,724 - __main__ - INFO - Progress: 50% - AI Processing - Processing tile 64/95
+2025-11-11 11:29:57,001 - ai.tile_segmentation - INFO - [TILE PROGRESS] Calling callback with 50% (tile 65/95)
+2025-11-11 11:29:57,002 - __main__ - INFO - [TILE CALLBACK] 50% - Processing tile 65/95
+2025-11-11 11:29:57,002 - __main__ - INFO - Progress: 50% - AI Processing - Processing tile 65/95
+2025-11-11 11:29:57,271 - ai.tile_segmentation - INFO - [TILE PROGRESS] Calling callback with 50% (tile 66/95)
+2025-11-11 11:29:57,272 - __main__ - INFO - [TILE CALLBACK] 50% - Processing tile 66/95
+2025-11-11 11:29:57,272 - __main__ - INFO - Progress: 50% - AI Processing - Processing tile 66/95
+2025-11-11 11:29:57,540 - ai.tile_segmentation - INFO - [TILE PROGRESS] Calling callback with 51% (tile 67/95)
+2025-11-11 11:29:57,540 - __main__ - INFO - [TILE CALLBACK] 51% - Processing tile 67/95
+2025-11-11 11:29:57,541 - __main__ - INFO - Progress: 51% - AI Processing - Processing tile 67/95
+2025-11-11 11:29:57,815 - ai.tile_segmentation - INFO - [TILE PROGRESS] Calling callback with 51% (tile 68/95)
+2025-11-11 11:29:57,815 - __main__ - INFO - [TILE CALLBACK] 51% - Processing tile 68/95
+2025-11-11 11:29:57,815 - __main__ - INFO - Progress: 51% - AI Processing - Processing tile 68/95
+2025-11-11 11:29:58,070 - ai.tile_segmentation - INFO - [TILE PROGRESS] Calling callback with 51% (tile 69/95)
+2025-11-11 11:29:58,070 - __main__ - INFO - [TILE CALLBACK] 51% - Processing tile 69/95
+2025-11-11 11:29:58,071 - __main__ - INFO - Progress: 51% - AI Processing - Processing tile 69/95
+2025-11-11 11:29:58,341 - ai.tile_segmentation - INFO - [TILE PROGRESS] Calling callback with 52% (tile 70/95)
+2025-11-11 11:29:58,342 - __main__ - INFO - [TILE CALLBACK] 52% - Processing tile 70/95
+2025-11-11 11:29:58,342 - __main__ - INFO - Progress: 52% - AI Processing - Processing tile 70/95
+2025-11-11 11:29:58,343 - ai.tile_segmentation - INFO - Processed 70/95 tiles
+2025-11-11 11:29:58,606 - ai.tile_segmentation - INFO - [TILE PROGRESS] Calling callback with 52% (tile 71/95)
+2025-11-11 11:29:58,606 - __main__ - INFO - [TILE CALLBACK] 52% - Processing tile 71/95
+2025-11-11 11:29:58,607 - __main__ - INFO - Progress: 52% - AI Processing - Processing tile 71/95
+2025-11-11 11:29:58,872 - ai.tile_segmentation - INFO - [TILE PROGRESS] Calling callback with 52% (tile 72/95)
+2025-11-11 11:29:58,873 - __main__ - INFO - [TILE CALLBACK] 52% - Processing tile 72/95
+2025-11-11 11:29:58,873 - __main__ - INFO - Progress: 52% - AI Processing - Processing tile 72/95
+2025-11-11 11:29:59,145 - ai.tile_segmentation - INFO - [TILE PROGRESS] Calling callback with 53% (tile 73/95)
+2025-11-11 11:29:59,145 - __main__ - INFO - [TILE CALLBACK] 53% - Processing tile 73/95
+2025-11-11 11:29:59,145 - __main__ - INFO - Progress: 53% - AI Processing - Processing tile 73/95
+2025-11-11 11:29:59,401 - ai.tile_segmentation - INFO - [TILE PROGRESS] Calling callback with 53% (tile 74/95)
+2025-11-11 11:29:59,401 - __main__ - INFO - [TILE CALLBACK] 53% - Processing tile 74/95
+2025-11-11 11:29:59,402 - __main__ - INFO - Progress: 53% - AI Processing - Processing tile 74/95
+2025-11-11 11:29:59,655 - ai.tile_segmentation - INFO - [TILE PROGRESS] Calling callback with 53% (tile 75/95)
+2025-11-11 11:29:59,656 - __main__ - INFO - [TILE CALLBACK] 53% - Processing tile 75/95
+2025-11-11 11:29:59,656 - __main__ - INFO - Progress: 53% - AI Processing - Processing tile 75/95
+2025-11-11 11:29:59,938 - ai.tile_segmentation - INFO - [TILE PROGRESS] Calling callback with 54% (tile 76/95)
+2025-11-11 11:29:59,938 - __main__ - INFO - [TILE CALLBACK] 54% - Processing tile 76/95
+2025-11-11 11:29:59,938 - __main__ - INFO - Progress: 54% - AI Processing - Processing tile 76/95
+2025-11-11 11:30:00,228 - ai.tile_segmentation - INFO - [TILE PROGRESS] Calling callback with 54% (tile 77/95)
+2025-11-11 11:30:00,228 - __main__ - INFO - [TILE CALLBACK] 54% - Processing tile 77/95
+2025-11-11 11:30:00,228 - __main__ - INFO - Progress: 54% - AI Processing - Processing tile 77/95
+2025-11-11 11:30:00,498 - ai.tile_segmentation - INFO - [TILE PROGRESS] Calling callback with 54% (tile 78/95)
+2025-11-11 11:30:00,499 - __main__ - INFO - [TILE CALLBACK] 54% - Processing tile 78/95
+2025-11-11 11:30:00,499 - __main__ - INFO - Progress: 54% - AI Processing - Processing tile 78/95
+2025-11-11 11:30:00,756 - ai.tile_segmentation - INFO - [TILE PROGRESS] Calling callback with 54% (tile 79/95)
+2025-11-11 11:30:00,756 - __main__ - INFO - [TILE CALLBACK] 54% - Processing tile 79/95
+2025-11-11 11:30:00,756 - __main__ - INFO - Progress: 54% - AI Processing - Processing tile 79/95
+2025-11-11 11:30:01,027 - ai.tile_segmentation - INFO - [TILE PROGRESS] Calling callback with 55% (tile 80/95)
+2025-11-11 11:30:01,028 - __main__ - INFO - [TILE CALLBACK] 55% - Processing tile 80/95
+2025-11-11 11:30:01,028 - __main__ - INFO - Progress: 55% - AI Processing - Processing tile 80/95
+2025-11-11 11:30:01,029 - ai.tile_segmentation - INFO - Processed 80/95 tiles
+2025-11-11 11:30:01,300 - ai.tile_segmentation - INFO - [TILE PROGRESS] Calling callback with 55% (tile 81/95)
+2025-11-11 11:30:01,301 - __main__ - INFO - [TILE CALLBACK] 55% - Processing tile 81/95
+2025-11-11 11:30:01,301 - __main__ - INFO - Progress: 55% - AI Processing - Processing tile 81/95
+2025-11-11 11:30:01,561 - ai.tile_segmentation - INFO - [TILE PROGRESS] Calling callback with 55% (tile 82/95)
+2025-11-11 11:30:01,562 - __main__ - INFO - [TILE CALLBACK] 55% - Processing tile 82/95
+2025-11-11 11:30:01,562 - __main__ - INFO - Progress: 55% - AI Processing - Processing tile 82/95
+2025-11-11 11:30:01,820 - ai.tile_segmentation - INFO - [TILE PROGRESS] Calling callback with 56% (tile 83/95)
+2025-11-11 11:30:01,820 - __main__ - INFO - [TILE CALLBACK] 56% - Processing tile 83/95
+2025-11-11 11:30:01,820 - __main__ - INFO - Progress: 56% - AI Processing - Processing tile 83/95
+2025-11-11 11:30:02,096 - ai.tile_segmentation - INFO - [TILE PROGRESS] Calling callback with 56% (tile 84/95)
+2025-11-11 11:30:02,097 - __main__ - INFO - [TILE CALLBACK] 56% - Processing tile 84/95
+2025-11-11 11:30:02,097 - __main__ - INFO - Progress: 56% - AI Processing - Processing tile 84/95
+2025-11-11 11:30:02,368 - ai.tile_segmentation - INFO - [TILE PROGRESS] Calling callback with 56% (tile 85/95)
+2025-11-11 11:30:02,369 - __main__ - INFO - [TILE CALLBACK] 56% - Processing tile 85/95
+2025-11-11 11:30:02,369 - __main__ - INFO - Progress: 56% - AI Processing - Processing tile 85/95
+2025-11-11 11:30:02,643 - ai.tile_segmentation - INFO - [TILE PROGRESS] Calling callback with 57% (tile 86/95)
+2025-11-11 11:30:02,644 - __main__ - INFO - [TILE CALLBACK] 57% - Processing tile 86/95
+2025-11-11 11:30:02,644 - __main__ - INFO - Progress: 57% - AI Processing - Processing tile 86/95
+2025-11-11 11:30:02,911 - ai.tile_segmentation - INFO - [TILE PROGRESS] Calling callback with 57% (tile 87/95)
+2025-11-11 11:30:02,911 - __main__ - INFO - [TILE CALLBACK] 57% - Processing tile 87/95
+2025-11-11 11:30:02,912 - __main__ - INFO - Progress: 57% - AI Processing - Processing tile 87/95
+2025-11-11 11:30:03,207 - ai.tile_segmentation - INFO - [TILE PROGRESS] Calling callback with 57% (tile 88/95)
+2025-11-11 11:30:03,207 - __main__ - INFO - [TILE CALLBACK] 57% - Processing tile 88/95
+2025-11-11 11:30:03,208 - __main__ - INFO - Progress: 57% - AI Processing - Processing tile 88/95
+2025-11-11 11:30:03,468 - ai.tile_segmentation - INFO - [TILE PROGRESS] Calling callback with 58% (tile 89/95)
+2025-11-11 11:30:03,468 - __main__ - INFO - [TILE CALLBACK] 58% - Processing tile 89/95
+2025-11-11 11:30:03,469 - __main__ - INFO - Progress: 58% - AI Processing - Processing tile 89/95
+2025-11-11 11:30:03,720 - ai.tile_segmentation - INFO - [TILE PROGRESS] Calling callback with 58% (tile 90/95)
+2025-11-11 11:30:03,720 - __main__ - INFO - [TILE CALLBACK] 58% - Processing tile 90/95
+2025-11-11 11:30:03,721 - __main__ - INFO - Progress: 58% - AI Processing - Processing tile 90/95
+2025-11-11 11:30:03,721 - ai.tile_segmentation - INFO - Processed 90/95 tiles
+2025-11-11 11:30:03,986 - ai.tile_segmentation - INFO - [TILE PROGRESS] Calling callback with 58% (tile 91/95)
+2025-11-11 11:30:03,986 - __main__ - INFO - [TILE CALLBACK] 58% - Processing tile 91/95
+2025-11-11 11:30:03,986 - __main__ - INFO - Progress: 58% - AI Processing - Processing tile 91/95
+2025-11-11 11:30:04,246 - ai.tile_segmentation - INFO - [TILE PROGRESS] Calling callback with 59% (tile 92/95)
+2025-11-11 11:30:04,246 - __main__ - INFO - [TILE CALLBACK] 59% - Processing tile 92/95
+2025-11-11 11:30:04,246 - __main__ - INFO - Progress: 59% - AI Processing - Processing tile 92/95
+2025-11-11 11:30:04,530 - ai.tile_segmentation - INFO - [TILE PROGRESS] Calling callback with 59% (tile 93/95)
+2025-11-11 11:30:04,530 - __main__ - INFO - [TILE CALLBACK] 59% - Processing tile 93/95
+2025-11-11 11:30:04,530 - __main__ - INFO - Progress: 59% - AI Processing - Processing tile 93/95
+2025-11-11 11:30:04,825 - ai.tile_segmentation - INFO - [TILE PROGRESS] Calling callback with 59% (tile 94/95)
+2025-11-11 11:30:04,826 - __main__ - INFO - [TILE CALLBACK] 59% - Processing tile 94/95
+2025-11-11 11:30:04,826 - __main__ - INFO - Progress: 59% - AI Processing - Processing tile 94/95
+2025-11-11 11:30:05,101 - ai.tile_segmentation - INFO - [TILE PROGRESS] Calling callback with 60% (tile 95/95)
+2025-11-11 11:30:05,101 - __main__ - INFO - [TILE CALLBACK] 60% - Processing tile 95/95
+2025-11-11 11:30:05,101 - __main__ - INFO - Progress: 60% - AI Processing - Processing tile 95/95
+2025-11-11 11:30:05,102 - ai.tile_segmentation - INFO - Tile segmentation complete: 0 stroke pixels
+2025-11-11 11:30:05,106 - ai.tile_segmentation - INFO - Mask refinement: 666108 → 250616 pixels (62.4% change)
+2025-11-11 11:30:05,107 - ai.hybrid_extractor - INFO - Tile segmentation: 250616 pixels in 27273ms
+2025-11-11 11:30:05,108 - ai.hybrid_extractor - INFO - Applying final cleanup...
+2025-11-11 11:30:05,108 - ai.hybrid_extractor - INFO - Morphological opening: kernel size 3 (removes noise)
+2025-11-11 11:30:05,112 - ai.hybrid_extractor - INFO - Morphological closing: kernel size 4 (connects gaps)
+2025-11-11 11:30:05,113 - ai.hybrid_extractor - INFO - Filtering small contours: min_area=80 px (scaled: 320)
+2025-11-11 11:30:05,135 - ai.hybrid_extractor - INFO - Contour filtering: kept 169, removed 970 small regions
+2025-11-11 11:30:05,140 - ai.hybrid_extractor - INFO - Hybrid extraction complete: 156293 pixels in 28230ms
+2025-11-11 11:30:05,140 - ai.hybrid_extractor - INFO - Stroke mask shape: (1080, 1920)
+2025-11-11 11:30:05,141 - ai.hybrid_extractor - INFO - Stroke mask dtype: uint8
+2025-11-11 11:30:05,142 - ai.hybrid_extractor - INFO - Non-zero pixels in mask: 156293
+2025-11-11 11:30:05,143 - ai.hybrid_extractor - INFO - ============================================================
+2025-11-11 11:30:05,143 - ai.hybrid_extractor - INFO - Step 4: Vectorizing...
+2025-11-11 11:30:05,144 - ai.hybrid_extractor - INFO - ============================================================
+2025-11-11 11:30:05,144 - ai.hybrid_extractor - INFO - Vectorizing mask: (1080, 1920)
+2025-11-11 11:30:05,145 - ai.hybrid_extractor - INFO - Skeletonizing mask...
+2025-11-11 11:30:05,326 - ai.hybrid_extractor - INFO - After skeletonization: 22695 pixels
+2025-11-11 11:30:05,326 - ai.hybrid_extractor - INFO - Finding contours...
+2025-11-11 11:30:05,337 - ai.hybrid_extractor - INFO - Found 406 contours
+2025-11-11 11:30:05,338 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,338 - ai.hybrid_extractor - INFO -   Contour 1: 3 points, color=#000000, width=2.5
+2025-11-11 11:30:05,339 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,339 - ai.hybrid_extractor - INFO -   Contour 2: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,339 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,340 - ai.hybrid_extractor - INFO -   Contour 3: 5 points, color=#000000, width=2.5
+2025-11-11 11:30:05,340 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,340 - ai.hybrid_extractor - INFO -   Contour 4: 7 points, color=#000000, width=2.5
+2025-11-11 11:30:05,341 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,341 - ai.hybrid_extractor - INFO -   Contour 5: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,342 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,342 - ai.hybrid_extractor - INFO -   Contour 6: 32 points, color=#000000, width=2.5
+2025-11-11 11:30:05,343 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,344 - ai.hybrid_extractor - INFO -   Contour 7: 14 points, color=#000000, width=2.5
+2025-11-11 11:30:05,344 - ai.hybrid_extractor - INFO -   Contour 8: Skipped (too few points: 1)
+2025-11-11 11:30:05,345 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,345 - ai.hybrid_extractor - INFO -   Contour 9: 52 points, color=#000000, width=2.5
+2025-11-11 11:30:05,345 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,345 - ai.hybrid_extractor - INFO -   Contour 10: 16 points, color=#000000, width=2.5
+2025-11-11 11:30:05,346 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,346 - ai.hybrid_extractor - INFO -   Contour 11: 10 points, color=#000000, width=2.5
+2025-11-11 11:30:05,347 - ai.hybrid_extractor - INFO -   Contour 12: Skipped (too few points: 1)
+2025-11-11 11:30:05,347 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,347 - ai.hybrid_extractor - INFO -   Contour 13: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,347 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,348 - ai.hybrid_extractor - INFO -   Contour 14: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,348 - ai.hybrid_extractor - INFO -   Contour 15: Skipped (too few points: 1)
+2025-11-11 11:30:05,348 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,348 - ai.hybrid_extractor - INFO -   Contour 16: 13 points, color=#000000, width=2.5
+2025-11-11 11:30:05,348 - ai.hybrid_extractor - INFO -   Contour 17: Skipped (too few points: 1)
+2025-11-11 11:30:05,349 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,349 - ai.hybrid_extractor - INFO -   Contour 18: 11 points, color=#000000, width=2.5
+2025-11-11 11:30:05,350 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,350 - ai.hybrid_extractor - INFO -   Contour 19: 16 points, color=#000000, width=2.5
+2025-11-11 11:30:05,351 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,352 - ai.hybrid_extractor - INFO -   Contour 20: 10 points, color=#000000, width=2.5
+2025-11-11 11:30:05,352 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,353 - ai.hybrid_extractor - INFO -   Contour 21: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,353 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,354 - ai.hybrid_extractor - INFO -   Contour 22: 11 points, color=#000000, width=2.5
+2025-11-11 11:30:05,355 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,355 - ai.hybrid_extractor - INFO -   Contour 23: 21 points, color=#000000, width=2.5
+2025-11-11 11:30:05,355 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,356 - ai.hybrid_extractor - INFO -   Contour 24: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,356 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,357 - ai.hybrid_extractor - INFO -   Contour 25: 21 points, color=#000000, width=2.5
+2025-11-11 11:30:05,357 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,358 - ai.hybrid_extractor - INFO -   Contour 26: 6 points, color=#000000, width=2.5
+2025-11-11 11:30:05,358 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,359 - ai.hybrid_extractor - INFO -   Contour 27: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,359 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,360 - ai.hybrid_extractor - INFO -   Contour 28: 16 points, color=#000000, width=2.5
+2025-11-11 11:30:05,360 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,360 - ai.hybrid_extractor - INFO -   Contour 29: 55 points, color=#000000, width=2.5
+2025-11-11 11:30:05,361 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,361 - ai.hybrid_extractor - INFO -   Contour 30: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,362 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,362 - ai.hybrid_extractor - INFO -   Contour 31: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,362 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,363 - ai.hybrid_extractor - INFO -   Contour 32: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,363 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,363 - ai.hybrid_extractor - INFO -   Contour 33: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,364 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,364 - ai.hybrid_extractor - INFO -   Contour 34: 9 points, color=#000000, width=2.5
+2025-11-11 11:30:05,364 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,364 - ai.hybrid_extractor - INFO -   Contour 35: 32 points, color=#000000, width=2.5
+2025-11-11 11:30:05,364 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,364 - ai.hybrid_extractor - INFO -   Contour 36: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,365 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,365 - ai.hybrid_extractor - INFO -   Contour 37: 4 points, color=#000000, width=2.5
+2025-11-11 11:30:05,365 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,365 - ai.hybrid_extractor - INFO -   Contour 38: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,366 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,366 - ai.hybrid_extractor - INFO -   Contour 39: 21 points, color=#000000, width=2.5
+2025-11-11 11:30:05,366 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,367 - ai.hybrid_extractor - INFO -   Contour 40: 5 points, color=#000000, width=2.5
+2025-11-11 11:30:05,367 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,368 - ai.hybrid_extractor - INFO -   Contour 41: 13 points, color=#000000, width=2.5
+2025-11-11 11:30:05,368 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,369 - ai.hybrid_extractor - INFO -   Contour 42: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,369 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,370 - ai.hybrid_extractor - INFO -   Contour 43: 3 points, color=#000000, width=2.5
+2025-11-11 11:30:05,370 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,371 - ai.hybrid_extractor - INFO -   Contour 44: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,371 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,371 - ai.hybrid_extractor - INFO -   Contour 45: 13 points, color=#000000, width=2.5
+2025-11-11 11:30:05,372 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,372 - ai.hybrid_extractor - INFO -   Contour 46: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,372 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,373 - ai.hybrid_extractor - INFO -   Contour 47: 13 points, color=#000000, width=2.5
+2025-11-11 11:30:05,373 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,374 - ai.hybrid_extractor - INFO -   Contour 48: 7 points, color=#000000, width=2.5
+2025-11-11 11:30:05,374 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,375 - ai.hybrid_extractor - INFO -   Contour 49: 117 points, color=#000000, width=2.5
+2025-11-11 11:30:05,375 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,376 - ai.hybrid_extractor - INFO -   Contour 50: 6 points, color=#000000, width=2.5
+2025-11-11 11:30:05,376 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,377 - ai.hybrid_extractor - INFO -   Contour 51: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,377 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,378 - ai.hybrid_extractor - INFO -   Contour 52: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,378 - ai.hybrid_extractor - INFO -   Contour 53: Skipped (too few points: 1)
+2025-11-11 11:30:05,379 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,380 - ai.hybrid_extractor - INFO -   Contour 54: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,380 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,381 - ai.hybrid_extractor - INFO -   Contour 55: 11 points, color=#000000, width=2.5
+2025-11-11 11:30:05,381 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,382 - ai.hybrid_extractor - INFO -   Contour 56: 11 points, color=#000000, width=2.5
+2025-11-11 11:30:05,382 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,383 - ai.hybrid_extractor - INFO -   Contour 57: 10 points, color=#000000, width=2.5
+2025-11-11 11:30:05,383 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,384 - ai.hybrid_extractor - INFO -   Contour 58: 59 points, color=#000000, width=2.5
+2025-11-11 11:30:05,385 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,385 - ai.hybrid_extractor - INFO -   Contour 59: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,386 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,386 - ai.hybrid_extractor - INFO -   Contour 60: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,387 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,387 - ai.hybrid_extractor - INFO -   Contour 61: 6 points, color=#000000, width=2.5
+2025-11-11 11:30:05,388 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,388 - ai.hybrid_extractor - INFO -   Contour 62: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,389 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,389 - ai.hybrid_extractor - INFO -   Contour 63: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,390 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,390 - ai.hybrid_extractor - INFO -   Contour 64: 8 points, color=#000000, width=2.5
+2025-11-11 11:30:05,391 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,391 - ai.hybrid_extractor - INFO -   Contour 65: 39 points, color=#000000, width=2.5
+2025-11-11 11:30:05,392 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,393 - ai.hybrid_extractor - INFO -   Contour 66: 9 points, color=#000000, width=2.5
+2025-11-11 11:30:05,394 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,394 - ai.hybrid_extractor - INFO -   Contour 67: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,395 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,395 - ai.hybrid_extractor - INFO -   Contour 68: 20 points, color=#000000, width=2.5
+2025-11-11 11:30:05,396 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,396 - ai.hybrid_extractor - INFO -   Contour 69: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,397 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,398 - ai.hybrid_extractor - INFO -   Contour 70: 33 points, color=#000000, width=2.5
+2025-11-11 11:30:05,398 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,399 - ai.hybrid_extractor - INFO -   Contour 71: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,399 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,400 - ai.hybrid_extractor - INFO -   Contour 72: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,401 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,401 - ai.hybrid_extractor - INFO -   Contour 73: 5 points, color=#000000, width=2.5
+2025-11-11 11:30:05,402 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,402 - ai.hybrid_extractor - INFO -   Contour 74: 11 points, color=#000000, width=2.5
+2025-11-11 11:30:05,403 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,404 - ai.hybrid_extractor - INFO -   Contour 75: 5 points, color=#000000, width=2.5
+2025-11-11 11:30:05,405 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,405 - ai.hybrid_extractor - INFO -   Contour 76: 12 points, color=#000000, width=2.5
+2025-11-11 11:30:05,406 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,407 - ai.hybrid_extractor - INFO -   Contour 77: 3 points, color=#000000, width=2.5
+2025-11-11 11:30:05,408 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,408 - ai.hybrid_extractor - INFO -   Contour 78: 15 points, color=#000000, width=2.5
+2025-11-11 11:30:05,409 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,409 - ai.hybrid_extractor - INFO -   Contour 79: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,410 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,410 - ai.hybrid_extractor - INFO -   Contour 80: 101 points, color=#000000, width=2.5
+2025-11-11 11:30:05,411 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,411 - ai.hybrid_extractor - INFO -   Contour 81: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,411 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,412 - ai.hybrid_extractor - INFO -   Contour 82: 8 points, color=#000000, width=2.5
+2025-11-11 11:30:05,412 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,412 - ai.hybrid_extractor - INFO -   Contour 83: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,413 - ai.hybrid_extractor - INFO -   Contour 84: Skipped (too few points: 1)
+2025-11-11 11:30:05,413 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,413 - ai.hybrid_extractor - INFO -   Contour 85: 34 points, color=#000000, width=2.5
+2025-11-11 11:30:05,413 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,414 - ai.hybrid_extractor - INFO -   Contour 86: 7 points, color=#000000, width=2.5
+2025-11-11 11:30:05,414 - ai.hybrid_extractor - INFO -   Contour 87: Skipped (too few points: 1)
+2025-11-11 11:30:05,414 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,414 - ai.hybrid_extractor - INFO -   Contour 88: 22 points, color=#000000, width=2.5
+2025-11-11 11:30:05,415 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,415 - ai.hybrid_extractor - INFO -   Contour 89: 18 points, color=#000000, width=2.5
+2025-11-11 11:30:05,415 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,415 - ai.hybrid_extractor - INFO -   Contour 90: 21 points, color=#000000, width=2.5
+2025-11-11 11:30:05,416 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,417 - ai.hybrid_extractor - INFO -   Contour 91: 14 points, color=#000000, width=2.5
+2025-11-11 11:30:05,418 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,419 - ai.hybrid_extractor - INFO -   Contour 92: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,419 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,420 - ai.hybrid_extractor - INFO -   Contour 93: 6 points, color=#000000, width=2.5
+2025-11-11 11:30:05,420 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,421 - ai.hybrid_extractor - INFO -   Contour 94: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,422 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,423 - ai.hybrid_extractor - INFO -   Contour 95: 18 points, color=#000000, width=2.5
+2025-11-11 11:30:05,424 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,425 - ai.hybrid_extractor - INFO -   Contour 96: 12 points, color=#000000, width=2.5
+2025-11-11 11:30:05,426 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,427 - ai.hybrid_extractor - INFO -   Contour 97: 16 points, color=#000000, width=2.5
+2025-11-11 11:30:05,427 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,428 - ai.hybrid_extractor - INFO -   Contour 98: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,429 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,429 - ai.hybrid_extractor - INFO -   Contour 99: 13 points, color=#000000, width=2.5
+2025-11-11 11:30:05,430 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,431 - ai.hybrid_extractor - INFO -   Contour 100: 4 points, color=#000000, width=2.5
+2025-11-11 11:30:05,431 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,432 - ai.hybrid_extractor - INFO -   Contour 101: 12 points, color=#000000, width=2.5
+2025-11-11 11:30:05,433 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,434 - ai.hybrid_extractor - INFO -   Contour 102: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,435 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,435 - ai.hybrid_extractor - INFO -   Contour 103: 10 points, color=#000000, width=2.5
+2025-11-11 11:30:05,436 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,437 - ai.hybrid_extractor - INFO -   Contour 104: 12 points, color=#000000, width=2.5
+2025-11-11 11:30:05,437 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,438 - ai.hybrid_extractor - INFO -   Contour 105: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,438 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,439 - ai.hybrid_extractor - INFO -   Contour 106: 4 points, color=#000000, width=2.5
+2025-11-11 11:30:05,439 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,440 - ai.hybrid_extractor - INFO -   Contour 107: 5 points, color=#000000, width=2.5
+2025-11-11 11:30:05,440 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,440 - ai.hybrid_extractor - INFO -   Contour 108: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,442 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,442 - ai.hybrid_extractor - INFO -   Contour 109: 9 points, color=#000000, width=2.5
+2025-11-11 11:30:05,443 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,444 - ai.hybrid_extractor - INFO -   Contour 110: 6 points, color=#000000, width=2.5
+2025-11-11 11:30:05,445 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,445 - ai.hybrid_extractor - INFO -   Contour 111: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,446 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,447 - ai.hybrid_extractor - INFO -   Contour 112: 41 points, color=#000000, width=2.5
+2025-11-11 11:30:05,447 - ai.hybrid_extractor - INFO -   Contour 113: Skipped (too few points: 1)
+2025-11-11 11:30:05,448 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,449 - ai.hybrid_extractor - INFO -   Contour 114: 5 points, color=#000000, width=2.5
+2025-11-11 11:30:05,449 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,450 - ai.hybrid_extractor - INFO -   Contour 115: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,451 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,452 - ai.hybrid_extractor - INFO -   Contour 116: 13 points, color=#000000, width=2.5
+2025-11-11 11:30:05,452 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,453 - ai.hybrid_extractor - INFO -   Contour 117: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,454 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,455 - ai.hybrid_extractor - INFO -   Contour 118: 195 points, color=#000000, width=2.5
+2025-11-11 11:30:05,456 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,456 - ai.hybrid_extractor - INFO -   Contour 119: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,457 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,458 - ai.hybrid_extractor - INFO -   Contour 120: 3 points, color=#000000, width=2.5
+2025-11-11 11:30:05,459 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,459 - ai.hybrid_extractor - INFO -   Contour 121: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,460 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,461 - ai.hybrid_extractor - INFO -   Contour 122: 40 points, color=#000000, width=2.5
+2025-11-11 11:30:05,461 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,462 - ai.hybrid_extractor - INFO -   Contour 123: 9 points, color=#000000, width=2.5
+2025-11-11 11:30:05,462 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,462 - ai.hybrid_extractor - INFO -   Contour 124: 12 points, color=#000000, width=2.5
+2025-11-11 11:30:05,463 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,463 - ai.hybrid_extractor - INFO -   Contour 125: 5 points, color=#000000, width=2.5
+2025-11-11 11:30:05,464 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,464 - ai.hybrid_extractor - INFO -   Contour 126: 9 points, color=#000000, width=2.5
+2025-11-11 11:30:05,465 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,465 - ai.hybrid_extractor - INFO -   Contour 127: 16 points, color=#000000, width=2.5
+2025-11-11 11:30:05,466 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,466 - ai.hybrid_extractor - INFO -   Contour 128: 24 points, color=#000000, width=2.5
+2025-11-11 11:30:05,467 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,468 - ai.hybrid_extractor - INFO -   Contour 129: 23 points, color=#000000, width=2.5
+2025-11-11 11:30:05,468 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,469 - ai.hybrid_extractor - INFO -   Contour 130: 54 points, color=#000000, width=2.5
+2025-11-11 11:30:05,470 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,470 - ai.hybrid_extractor - INFO -   Contour 131: 11 points, color=#000000, width=2.5
+2025-11-11 11:30:05,471 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,472 - ai.hybrid_extractor - INFO -   Contour 132: 19 points, color=#000000, width=2.5
+2025-11-11 11:30:05,472 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,473 - ai.hybrid_extractor - INFO -   Contour 133: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,474 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,475 - ai.hybrid_extractor - INFO -   Contour 134: 11 points, color=#000000, width=2.5
+2025-11-11 11:30:05,475 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,476 - ai.hybrid_extractor - INFO -   Contour 135: 11 points, color=#000000, width=2.5
+2025-11-11 11:30:05,477 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,477 - ai.hybrid_extractor - INFO -   Contour 136: 7 points, color=#000000, width=2.5
+2025-11-11 11:30:05,478 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,479 - ai.hybrid_extractor - INFO -   Contour 137: 18 points, color=#000000, width=2.5
+2025-11-11 11:30:05,480 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,481 - ai.hybrid_extractor - INFO -   Contour 138: 11 points, color=#000000, width=2.5
+2025-11-11 11:30:05,481 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,482 - ai.hybrid_extractor - INFO -   Contour 139: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,483 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,484 - ai.hybrid_extractor - INFO -   Contour 140: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,485 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,485 - ai.hybrid_extractor - INFO -   Contour 141: 9 points, color=#000000, width=2.5
+2025-11-11 11:30:05,486 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,486 - ai.hybrid_extractor - INFO -   Contour 142: 25 points, color=#000000, width=2.5
+2025-11-11 11:30:05,487 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,487 - ai.hybrid_extractor - INFO -   Contour 143: 14 points, color=#000000, width=2.5
+2025-11-11 11:30:05,488 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,489 - ai.hybrid_extractor - INFO -   Contour 144: 10 points, color=#000000, width=2.5
+2025-11-11 11:30:05,489 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,490 - ai.hybrid_extractor - INFO -   Contour 145: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,490 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,491 - ai.hybrid_extractor - INFO -   Contour 146: 9 points, color=#000000, width=2.5
+2025-11-11 11:30:05,492 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,492 - ai.hybrid_extractor - INFO -   Contour 147: 8 points, color=#000000, width=2.5
+2025-11-11 11:30:05,493 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,494 - ai.hybrid_extractor - INFO -   Contour 148: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,494 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,495 - ai.hybrid_extractor - INFO -   Contour 149: 3 points, color=#000000, width=2.5
+2025-11-11 11:30:05,496 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,496 - ai.hybrid_extractor - INFO -   Contour 150: 57 points, color=#000000, width=2.5
+2025-11-11 11:30:05,497 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,498 - ai.hybrid_extractor - INFO -   Contour 151: 27 points, color=#000000, width=2.5
+2025-11-11 11:30:05,499 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,499 - ai.hybrid_extractor - INFO -   Contour 152: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,500 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,501 - ai.hybrid_extractor - INFO -   Contour 153: 7 points, color=#000000, width=2.5
+2025-11-11 11:30:05,502 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,503 - ai.hybrid_extractor - INFO -   Contour 154: 6 points, color=#000000, width=2.5
+2025-11-11 11:30:05,503 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,504 - ai.hybrid_extractor - INFO -   Contour 155: 97 points, color=#000000, width=2.5
+2025-11-11 11:30:05,505 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,506 - ai.hybrid_extractor - INFO -   Contour 156: 24 points, color=#000000, width=2.5
+2025-11-11 11:30:05,507 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,507 - ai.hybrid_extractor - INFO -   Contour 157: 12 points, color=#000000, width=2.5
+2025-11-11 11:30:05,508 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,509 - ai.hybrid_extractor - INFO -   Contour 158: 3 points, color=#000000, width=2.5
+2025-11-11 11:30:05,510 - ai.hybrid_extractor - INFO -   Contour 159: Skipped (too few points: 1)
+2025-11-11 11:30:05,510 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,511 - ai.hybrid_extractor - INFO -   Contour 160: 42 points, color=#000000, width=2.5
+2025-11-11 11:30:05,511 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,512 - ai.hybrid_extractor - INFO -   Contour 161: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,512 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,512 - ai.hybrid_extractor - INFO -   Contour 162: 10 points, color=#000000, width=2.5
+2025-11-11 11:30:05,513 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,513 - ai.hybrid_extractor - INFO -   Contour 163: 15 points, color=#000000, width=2.5
+2025-11-11 11:30:05,514 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,514 - ai.hybrid_extractor - INFO -   Contour 164: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,514 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,515 - ai.hybrid_extractor - INFO -   Contour 165: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,515 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,516 - ai.hybrid_extractor - INFO -   Contour 166: 4 points, color=#000000, width=2.5
+2025-11-11 11:30:05,516 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,517 - ai.hybrid_extractor - INFO -   Contour 167: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,518 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,518 - ai.hybrid_extractor - INFO -   Contour 168: 28 points, color=#000000, width=2.5
+2025-11-11 11:30:05,519 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,520 - ai.hybrid_extractor - INFO -   Contour 169: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,520 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,521 - ai.hybrid_extractor - INFO -   Contour 170: 14 points, color=#000000, width=2.5
+2025-11-11 11:30:05,522 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,522 - ai.hybrid_extractor - INFO -   Contour 171: 18 points, color=#000000, width=2.5
+2025-11-11 11:30:05,523 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,524 - ai.hybrid_extractor - INFO -   Contour 172: 33 points, color=#000000, width=2.5
+2025-11-11 11:30:05,525 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,525 - ai.hybrid_extractor - INFO -   Contour 173: 18 points, color=#000000, width=2.5
+2025-11-11 11:30:05,526 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,526 - ai.hybrid_extractor - INFO -   Contour 174: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,527 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,527 - ai.hybrid_extractor - INFO -   Contour 175: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,528 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,529 - ai.hybrid_extractor - INFO -   Contour 176: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,530 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,531 - ai.hybrid_extractor - INFO -   Contour 177: 27 points, color=#000000, width=2.5
+2025-11-11 11:30:05,531 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,532 - ai.hybrid_extractor - INFO -   Contour 178: 40 points, color=#000000, width=2.5
+2025-11-11 11:30:05,532 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,533 - ai.hybrid_extractor - INFO -   Contour 179: 5 points, color=#000000, width=2.5
+2025-11-11 11:30:05,534 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,534 - ai.hybrid_extractor - INFO -   Contour 180: 3 points, color=#000000, width=2.5
+2025-11-11 11:30:05,535 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,535 - ai.hybrid_extractor - INFO -   Contour 181: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,536 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,536 - ai.hybrid_extractor - INFO -   Contour 182: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,537 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,538 - ai.hybrid_extractor - INFO -   Contour 183: 17 points, color=#000000, width=2.5
+2025-11-11 11:30:05,538 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,539 - ai.hybrid_extractor - INFO -   Contour 184: 9 points, color=#000000, width=2.5
+2025-11-11 11:30:05,540 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,541 - ai.hybrid_extractor - INFO -   Contour 185: 6 points, color=#000000, width=2.5
+2025-11-11 11:30:05,541 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,542 - ai.hybrid_extractor - INFO -   Contour 186: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,543 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,543 - ai.hybrid_extractor - INFO -   Contour 187: 20 points, color=#000000, width=2.5
+2025-11-11 11:30:05,544 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,545 - ai.hybrid_extractor - INFO -   Contour 188: 109 points, color=#000000, width=2.5
+2025-11-11 11:30:05,545 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,546 - ai.hybrid_extractor - INFO -   Contour 189: 9 points, color=#000000, width=2.5
+2025-11-11 11:30:05,546 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,547 - ai.hybrid_extractor - INFO -   Contour 190: 53 points, color=#000000, width=2.5
+2025-11-11 11:30:05,547 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,548 - ai.hybrid_extractor - INFO -   Contour 191: 26 points, color=#000000, width=2.5
+2025-11-11 11:30:05,549 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,550 - ai.hybrid_extractor - INFO -   Contour 192: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,551 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,551 - ai.hybrid_extractor - INFO -   Contour 193: 4 points, color=#000000, width=2.5
+2025-11-11 11:30:05,552 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,553 - ai.hybrid_extractor - INFO -   Contour 194: 5 points, color=#000000, width=2.5
+2025-11-11 11:30:05,553 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,554 - ai.hybrid_extractor - INFO -   Contour 195: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,555 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,556 - ai.hybrid_extractor - INFO -   Contour 196: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,557 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,558 - ai.hybrid_extractor - INFO -   Contour 197: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,559 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,560 - ai.hybrid_extractor - INFO -   Contour 198: 10 points, color=#000000, width=2.5
+2025-11-11 11:30:05,561 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,561 - ai.hybrid_extractor - INFO -   Contour 199: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,562 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,562 - ai.hybrid_extractor - INFO -   Contour 200: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,563 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,564 - ai.hybrid_extractor - INFO -   Contour 201: 12 points, color=#000000, width=2.5
+2025-11-11 11:30:05,564 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,565 - ai.hybrid_extractor - INFO -   Contour 202: 5 points, color=#000000, width=2.5
+2025-11-11 11:30:05,567 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,568 - ai.hybrid_extractor - INFO -   Contour 203: 66 points, color=#000000, width=2.5
+2025-11-11 11:30:05,569 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,569 - ai.hybrid_extractor - INFO -   Contour 204: 23 points, color=#000000, width=2.5
+2025-11-11 11:30:05,570 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,571 - ai.hybrid_extractor - INFO -   Contour 205: 15 points, color=#000000, width=2.5
+2025-11-11 11:30:05,572 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,572 - ai.hybrid_extractor - INFO -   Contour 206: 518 points, color=#000000, width=2.5
+2025-11-11 11:30:05,573 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,575 - ai.hybrid_extractor - INFO -   Contour 207: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,576 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,576 - ai.hybrid_extractor - INFO -   Contour 208: 8 points, color=#000000, width=2.5
+2025-11-11 11:30:05,577 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,578 - ai.hybrid_extractor - INFO -   Contour 209: 7 points, color=#000000, width=2.5
+2025-11-11 11:30:05,578 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,579 - ai.hybrid_extractor - INFO -   Contour 210: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,580 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,581 - ai.hybrid_extractor - INFO -   Contour 211: 31 points, color=#000000, width=2.5
+2025-11-11 11:30:05,582 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,582 - ai.hybrid_extractor - INFO -   Contour 212: 4 points, color=#000000, width=2.5
+2025-11-11 11:30:05,583 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,584 - ai.hybrid_extractor - INFO -   Contour 213: 9 points, color=#000000, width=2.5
+2025-11-11 11:30:05,584 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,585 - ai.hybrid_extractor - INFO -   Contour 214: 7 points, color=#000000, width=2.5
+2025-11-11 11:30:05,585 - ai.hybrid_extractor - INFO -   Contour 215: Skipped (too few points: 1)
+2025-11-11 11:30:05,586 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,586 - ai.hybrid_extractor - INFO -   Contour 216: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,587 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,587 - ai.hybrid_extractor - INFO -   Contour 217: 12 points, color=#000000, width=2.5
+2025-11-11 11:30:05,588 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,588 - ai.hybrid_extractor - INFO -   Contour 218: 8 points, color=#000000, width=2.5
+2025-11-11 11:30:05,588 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,589 - ai.hybrid_extractor - INFO -   Contour 219: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,589 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,589 - ai.hybrid_extractor - INFO -   Contour 220: 20 points, color=#000000, width=2.5
+2025-11-11 11:30:05,590 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,590 - ai.hybrid_extractor - INFO -   Contour 221: 3 points, color=#000000, width=2.5
+2025-11-11 11:30:05,590 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,591 - ai.hybrid_extractor - INFO -   Contour 222: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,591 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,592 - ai.hybrid_extractor - INFO -   Contour 223: 14 points, color=#000000, width=2.5
+2025-11-11 11:30:05,593 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,593 - ai.hybrid_extractor - INFO -   Contour 224: 13 points, color=#000000, width=2.5
+2025-11-11 11:30:05,594 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,594 - ai.hybrid_extractor - INFO -   Contour 225: 14 points, color=#000000, width=2.5
+2025-11-11 11:30:05,595 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,595 - ai.hybrid_extractor - INFO -   Contour 226: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,596 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,596 - ai.hybrid_extractor - INFO -   Contour 227: 26 points, color=#000000, width=2.5
+2025-11-11 11:30:05,596 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,597 - ai.hybrid_extractor - INFO -   Contour 228: 5 points, color=#000000, width=2.5
+2025-11-11 11:30:05,598 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,599 - ai.hybrid_extractor - INFO -   Contour 229: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,599 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,600 - ai.hybrid_extractor - INFO -   Contour 230: 5 points, color=#000000, width=2.5
+2025-11-11 11:30:05,601 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,602 - ai.hybrid_extractor - INFO -   Contour 231: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,602 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,603 - ai.hybrid_extractor - INFO -   Contour 232: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,603 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,604 - ai.hybrid_extractor - INFO -   Contour 233: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,604 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,605 - ai.hybrid_extractor - INFO -   Contour 234: 36 points, color=#000000, width=2.5
+2025-11-11 11:30:05,605 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,605 - ai.hybrid_extractor - INFO -   Contour 235: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,605 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,606 - ai.hybrid_extractor - INFO -   Contour 236: 17 points, color=#000000, width=2.5
+2025-11-11 11:30:05,606 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,606 - ai.hybrid_extractor - INFO -   Contour 237: 6 points, color=#000000, width=2.5
+2025-11-11 11:30:05,607 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,607 - ai.hybrid_extractor - INFO -   Contour 238: 6 points, color=#000000, width=2.5
+2025-11-11 11:30:05,608 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,608 - ai.hybrid_extractor - INFO -   Contour 239: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,609 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,610 - ai.hybrid_extractor - INFO -   Contour 240: 26 points, color=#000000, width=2.5
+2025-11-11 11:30:05,610 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,611 - ai.hybrid_extractor - INFO -   Contour 241: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,611 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,612 - ai.hybrid_extractor - INFO -   Contour 242: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,613 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,613 - ai.hybrid_extractor - INFO -   Contour 243: 5 points, color=#000000, width=2.5
+2025-11-11 11:30:05,614 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,615 - ai.hybrid_extractor - INFO -   Contour 244: 11 points, color=#000000, width=2.5
+2025-11-11 11:30:05,615 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,616 - ai.hybrid_extractor - INFO -   Contour 245: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,617 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,618 - ai.hybrid_extractor - INFO -   Contour 246: 31 points, color=#000000, width=2.5
+2025-11-11 11:30:05,618 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,619 - ai.hybrid_extractor - INFO -   Contour 247: 7 points, color=#000000, width=2.5
+2025-11-11 11:30:05,620 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,620 - ai.hybrid_extractor - INFO -   Contour 248: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,620 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,621 - ai.hybrid_extractor - INFO -   Contour 249: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,621 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,621 - ai.hybrid_extractor - INFO -   Contour 250: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,622 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,623 - ai.hybrid_extractor - INFO -   Contour 251: 10 points, color=#000000, width=2.5
+2025-11-11 11:30:05,624 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,624 - ai.hybrid_extractor - INFO -   Contour 252: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,625 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,626 - ai.hybrid_extractor - INFO -   Contour 253: 4 points, color=#000000, width=2.5
+2025-11-11 11:30:05,627 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,627 - ai.hybrid_extractor - INFO -   Contour 254: 7 points, color=#000000, width=2.5
+2025-11-11 11:30:05,628 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,628 - ai.hybrid_extractor - INFO -   Contour 255: 19 points, color=#000000, width=2.5
+2025-11-11 11:30:05,629 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,629 - ai.hybrid_extractor - INFO -   Contour 256: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,630 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,630 - ai.hybrid_extractor - INFO -   Contour 257: 10 points, color=#000000, width=2.5
+2025-11-11 11:30:05,631 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,631 - ai.hybrid_extractor - INFO -   Contour 258: 12 points, color=#000000, width=2.5
+2025-11-11 11:30:05,632 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,632 - ai.hybrid_extractor - INFO -   Contour 259: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,633 - ai.hybrid_extractor - INFO -   Contour 260: Skipped (too few points: 1)
+2025-11-11 11:30:05,634 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,635 - ai.hybrid_extractor - INFO -   Contour 261: 5 points, color=#000000, width=2.5
+2025-11-11 11:30:05,635 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,636 - ai.hybrid_extractor - INFO -   Contour 262: 10 points, color=#000000, width=2.5
+2025-11-11 11:30:05,636 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,637 - ai.hybrid_extractor - INFO -   Contour 263: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,637 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,638 - ai.hybrid_extractor - INFO -   Contour 264: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,638 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,639 - ai.hybrid_extractor - INFO -   Contour 265: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,639 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,640 - ai.hybrid_extractor - INFO -   Contour 266: 9 points, color=#000000, width=2.5
+2025-11-11 11:30:05,640 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,641 - ai.hybrid_extractor - INFO -   Contour 267: 8 points, color=#000000, width=2.5
+2025-11-11 11:30:05,641 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,642 - ai.hybrid_extractor - INFO -   Contour 268: 9 points, color=#000000, width=2.5
+2025-11-11 11:30:05,643 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,644 - ai.hybrid_extractor - INFO -   Contour 269: 5 points, color=#000000, width=2.5
+2025-11-11 11:30:05,644 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,645 - ai.hybrid_extractor - INFO -   Contour 270: 5 points, color=#000000, width=2.5
+2025-11-11 11:30:05,645 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,646 - ai.hybrid_extractor - INFO -   Contour 271: 11 points, color=#000000, width=2.5
+2025-11-11 11:30:05,647 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,647 - ai.hybrid_extractor - INFO -   Contour 272: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,648 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,649 - ai.hybrid_extractor - INFO -   Contour 273: 7 points, color=#000000, width=2.5
+2025-11-11 11:30:05,649 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,650 - ai.hybrid_extractor - INFO -   Contour 274: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,651 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,651 - ai.hybrid_extractor - INFO -   Contour 275: 5 points, color=#000000, width=2.5
+2025-11-11 11:30:05,652 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,652 - ai.hybrid_extractor - INFO -   Contour 276: 7 points, color=#000000, width=2.5
+2025-11-11 11:30:05,653 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,654 - ai.hybrid_extractor - INFO -   Contour 277: 106 points, color=#000000, width=2.5
+2025-11-11 11:30:05,654 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,655 - ai.hybrid_extractor - INFO -   Contour 278: 8 points, color=#000000, width=2.5
+2025-11-11 11:30:05,656 - ai.hybrid_extractor - INFO -   Contour 279: Skipped (too few points: 1)
+2025-11-11 11:30:05,656 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,657 - ai.hybrid_extractor - INFO -   Contour 280: 44 points, color=#000000, width=2.5
+2025-11-11 11:30:05,658 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,660 - ai.hybrid_extractor - INFO -   Contour 281: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,661 - ai.hybrid_extractor - INFO -   Contour 282: Skipped (too few points: 1)
+2025-11-11 11:30:05,661 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,662 - ai.hybrid_extractor - INFO -   Contour 283: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,663 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,663 - ai.hybrid_extractor - INFO -   Contour 284: 19 points, color=#000000, width=2.5
+2025-11-11 11:30:05,664 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,664 - ai.hybrid_extractor - INFO -   Contour 285: 7 points, color=#000000, width=2.5
+2025-11-11 11:30:05,665 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,666 - ai.hybrid_extractor - INFO -   Contour 286: 12 points, color=#000000, width=2.5
+2025-11-11 11:30:05,666 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,667 - ai.hybrid_extractor - INFO -   Contour 287: 16 points, color=#000000, width=2.5
+2025-11-11 11:30:05,668 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,669 - ai.hybrid_extractor - INFO -   Contour 288: 11 points, color=#000000, width=2.5
+2025-11-11 11:30:05,669 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,670 - ai.hybrid_extractor - INFO -   Contour 289: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,670 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,671 - ai.hybrid_extractor - INFO -   Contour 290: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,671 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,672 - ai.hybrid_extractor - INFO -   Contour 291: 36 points, color=#000000, width=2.5
+2025-11-11 11:30:05,673 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,674 - ai.hybrid_extractor - INFO -   Contour 292: 15 points, color=#000000, width=2.5
+2025-11-11 11:30:05,675 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,675 - ai.hybrid_extractor - INFO -   Contour 293: 8 points, color=#000000, width=2.5
+2025-11-11 11:30:05,676 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,677 - ai.hybrid_extractor - INFO -   Contour 294: 7 points, color=#000000, width=2.5
+2025-11-11 11:30:05,678 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,678 - ai.hybrid_extractor - INFO -   Contour 295: 5 points, color=#000000, width=2.5
+2025-11-11 11:30:05,679 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,679 - ai.hybrid_extractor - INFO -   Contour 296: 73 points, color=#000000, width=2.5
+2025-11-11 11:30:05,680 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,680 - ai.hybrid_extractor - INFO -   Contour 297: 4 points, color=#000000, width=2.5
+2025-11-11 11:30:05,681 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,682 - ai.hybrid_extractor - INFO -   Contour 298: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,682 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,683 - ai.hybrid_extractor - INFO -   Contour 299: 7 points, color=#000000, width=2.5
+2025-11-11 11:30:05,683 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,684 - ai.hybrid_extractor - INFO -   Contour 300: 11 points, color=#000000, width=2.5
+2025-11-11 11:30:05,685 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,685 - ai.hybrid_extractor - INFO -   Contour 301: 3 points, color=#000000, width=2.5
+2025-11-11 11:30:05,686 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,687 - ai.hybrid_extractor - INFO -   Contour 302: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,687 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,687 - ai.hybrid_extractor - INFO -   Contour 303: 29 points, color=#000000, width=2.5
+2025-11-11 11:30:05,688 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,688 - ai.hybrid_extractor - INFO -   Contour 304: 8 points, color=#000000, width=2.5
+2025-11-11 11:30:05,688 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,688 - ai.hybrid_extractor - INFO -   Contour 305: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,689 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,689 - ai.hybrid_extractor - INFO -   Contour 306: 13 points, color=#000000, width=2.5
+2025-11-11 11:30:05,689 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,690 - ai.hybrid_extractor - INFO -   Contour 307: 10 points, color=#000000, width=2.5
+2025-11-11 11:30:05,690 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,691 - ai.hybrid_extractor - INFO -   Contour 308: 25 points, color=#000000, width=2.5
+2025-11-11 11:30:05,691 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,692 - ai.hybrid_extractor - INFO -   Contour 309: 24 points, color=#000000, width=2.5
+2025-11-11 11:30:05,693 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,694 - ai.hybrid_extractor - INFO -   Contour 310: 3 points, color=#000000, width=2.5
+2025-11-11 11:30:05,694 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,695 - ai.hybrid_extractor - INFO -   Contour 311: 7 points, color=#000000, width=2.5
+2025-11-11 11:30:05,695 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,696 - ai.hybrid_extractor - INFO -   Contour 312: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,696 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,697 - ai.hybrid_extractor - INFO -   Contour 313: 26 points, color=#000000, width=2.5
+2025-11-11 11:30:05,698 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,698 - ai.hybrid_extractor - INFO -   Contour 314: 44 points, color=#000000, width=2.5
+2025-11-11 11:30:05,699 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,700 - ai.hybrid_extractor - INFO -   Contour 315: 20 points, color=#000000, width=2.5
+2025-11-11 11:30:05,701 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,702 - ai.hybrid_extractor - INFO -   Contour 316: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,703 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,703 - ai.hybrid_extractor - INFO -   Contour 317: 4 points, color=#000000, width=2.5
+2025-11-11 11:30:05,704 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,704 - ai.hybrid_extractor - INFO -   Contour 318: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,706 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,706 - ai.hybrid_extractor - INFO -   Contour 319: 793 points, color=#000000, width=2.5
+2025-11-11 11:30:05,707 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,708 - ai.hybrid_extractor - INFO -   Contour 320: 24 points, color=#000000, width=2.5
+2025-11-11 11:30:05,710 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,711 - ai.hybrid_extractor - INFO -   Contour 321: 9 points, color=#000000, width=2.5
+2025-11-11 11:30:05,711 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,712 - ai.hybrid_extractor - INFO -   Contour 322: 12 points, color=#000000, width=2.5
+2025-11-11 11:30:05,713 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,713 - ai.hybrid_extractor - INFO -   Contour 323: 4 points, color=#000000, width=2.5
+2025-11-11 11:30:05,714 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,714 - ai.hybrid_extractor - INFO -   Contour 324: 12 points, color=#000000, width=2.5
+2025-11-11 11:30:05,715 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,715 - ai.hybrid_extractor - INFO -   Contour 325: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,719 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,720 - ai.hybrid_extractor - INFO -   Contour 326: 3 points, color=#000000, width=2.5
+2025-11-11 11:30:05,720 - ai.hybrid_extractor - INFO -   Contour 327: Skipped (too few points: 1)
+2025-11-11 11:30:05,721 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,722 - ai.hybrid_extractor - INFO -   Contour 328: 8 points, color=#000000, width=2.5
+2025-11-11 11:30:05,722 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,723 - ai.hybrid_extractor - INFO -   Contour 329: 12 points, color=#000000, width=2.5
+2025-11-11 11:30:05,723 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,724 - ai.hybrid_extractor - INFO -   Contour 330: 4 points, color=#000000, width=2.5
+2025-11-11 11:30:05,724 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,726 - ai.hybrid_extractor - INFO -   Contour 331: 15 points, color=#000000, width=2.5
+2025-11-11 11:30:05,726 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,727 - ai.hybrid_extractor - INFO -   Contour 332: 29 points, color=#000000, width=2.5
+2025-11-11 11:30:05,727 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,728 - ai.hybrid_extractor - INFO -   Contour 333: 23 points, color=#000000, width=2.5
+2025-11-11 11:30:05,729 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,729 - ai.hybrid_extractor - INFO -   Contour 334: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,729 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,730 - ai.hybrid_extractor - INFO -   Contour 335: 29 points, color=#000000, width=2.5
+2025-11-11 11:30:05,730 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,731 - ai.hybrid_extractor - INFO -   Contour 336: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,731 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,731 - ai.hybrid_extractor - INFO -   Contour 337: 10 points, color=#000000, width=2.5
+2025-11-11 11:30:05,732 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,732 - ai.hybrid_extractor - INFO -   Contour 338: 19 points, color=#000000, width=2.5
+2025-11-11 11:30:05,733 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,733 - ai.hybrid_extractor - INFO -   Contour 339: 4 points, color=#000000, width=2.5
+2025-11-11 11:30:05,734 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,734 - ai.hybrid_extractor - INFO -   Contour 340: 40 points, color=#000000, width=2.5
+2025-11-11 11:30:05,735 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,735 - ai.hybrid_extractor - INFO -   Contour 341: 5 points, color=#000000, width=2.5
+2025-11-11 11:30:05,736 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,736 - ai.hybrid_extractor - INFO -   Contour 342: 8 points, color=#000000, width=2.5
+2025-11-11 11:30:05,737 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,737 - ai.hybrid_extractor - INFO -   Contour 343: 3 points, color=#000000, width=2.5
+2025-11-11 11:30:05,738 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,738 - ai.hybrid_extractor - INFO -   Contour 344: 10 points, color=#000000, width=2.5
+2025-11-11 11:30:05,738 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,739 - ai.hybrid_extractor - INFO -   Contour 345: 17 points, color=#000000, width=2.5
+2025-11-11 11:30:05,739 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,740 - ai.hybrid_extractor - INFO -   Contour 346: 4 points, color=#000000, width=2.5
+2025-11-11 11:30:05,742 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,743 - ai.hybrid_extractor - INFO -   Contour 347: 4 points, color=#000000, width=2.5
+2025-11-11 11:30:05,743 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,744 - ai.hybrid_extractor - INFO -   Contour 348: 142 points, color=#000000, width=2.5
+2025-11-11 11:30:05,744 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,745 - ai.hybrid_extractor - INFO -   Contour 349: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,745 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,746 - ai.hybrid_extractor - INFO -   Contour 350: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,746 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,747 - ai.hybrid_extractor - INFO -   Contour 351: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,747 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,747 - ai.hybrid_extractor - INFO -   Contour 352: 3 points, color=#000000, width=2.5
+2025-11-11 11:30:05,748 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,748 - ai.hybrid_extractor - INFO -   Contour 353: 18 points, color=#000000, width=2.5
+2025-11-11 11:30:05,748 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,749 - ai.hybrid_extractor - INFO -   Contour 354: 10 points, color=#000000, width=2.5
+2025-11-11 11:30:05,750 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,750 - ai.hybrid_extractor - INFO -   Contour 355: 43 points, color=#000000, width=2.5
+2025-11-11 11:30:05,751 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,752 - ai.hybrid_extractor - INFO -   Contour 356: 130 points, color=#000000, width=2.5
+2025-11-11 11:30:05,752 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,753 - ai.hybrid_extractor - INFO -   Contour 357: 22 points, color=#000000, width=2.5
+2025-11-11 11:30:05,753 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,754 - ai.hybrid_extractor - INFO -   Contour 358: 72 points, color=#000000, width=2.5
+2025-11-11 11:30:05,754 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,755 - ai.hybrid_extractor - INFO -   Contour 359: 11 points, color=#000000, width=2.5
+2025-11-11 11:30:05,755 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,755 - ai.hybrid_extractor - INFO -   Contour 360: 130 points, color=#000000, width=2.5
+2025-11-11 11:30:05,756 - ai.hybrid_extractor - INFO -   Contour 361: Skipped (too few points: 1)
+2025-11-11 11:30:05,756 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,757 - ai.hybrid_extractor - INFO -   Contour 362: 116 points, color=#000000, width=2.5
+2025-11-11 11:30:05,758 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,759 - ai.hybrid_extractor - INFO -   Contour 363: 11 points, color=#000000, width=2.5
+2025-11-11 11:30:05,759 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,760 - ai.hybrid_extractor - INFO -   Contour 364: 10 points, color=#000000, width=2.5
+2025-11-11 11:30:05,760 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,760 - ai.hybrid_extractor - INFO -   Contour 365: 41 points, color=#000000, width=2.5
+2025-11-11 11:30:05,761 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,761 - ai.hybrid_extractor - INFO -   Contour 366: 6 points, color=#000000, width=2.5
+2025-11-11 11:30:05,762 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,762 - ai.hybrid_extractor - INFO -   Contour 367: 43 points, color=#000000, width=2.5
+2025-11-11 11:30:05,762 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,763 - ai.hybrid_extractor - INFO -   Contour 368: 22 points, color=#000000, width=2.5
+2025-11-11 11:30:05,763 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,763 - ai.hybrid_extractor - INFO -   Contour 369: 13 points, color=#000000, width=2.5
+2025-11-11 11:30:05,764 - ai.hybrid_extractor - INFO -   Contour 370: Skipped (too few points: 1)
+2025-11-11 11:30:05,764 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,765 - ai.hybrid_extractor - INFO -   Contour 371: 17 points, color=#000000, width=2.5
+2025-11-11 11:30:05,765 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,765 - ai.hybrid_extractor - INFO -   Contour 372: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,766 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,766 - ai.hybrid_extractor - INFO -   Contour 373: 11 points, color=#000000, width=2.5
+2025-11-11 11:30:05,767 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,767 - ai.hybrid_extractor - INFO -   Contour 374: 126 points, color=#000000, width=2.5
+2025-11-11 11:30:05,768 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,768 - ai.hybrid_extractor - INFO -   Contour 375: 22 points, color=#000000, width=2.5
+2025-11-11 11:30:05,769 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,769 - ai.hybrid_extractor - INFO -   Contour 376: 9 points, color=#000000, width=2.5
+2025-11-11 11:30:05,769 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,770 - ai.hybrid_extractor - INFO -   Contour 377: 3 points, color=#000000, width=2.5
+2025-11-11 11:30:05,770 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,771 - ai.hybrid_extractor - INFO -   Contour 378: 8 points, color=#000000, width=2.5
+2025-11-11 11:30:05,771 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,772 - ai.hybrid_extractor - INFO -   Contour 379: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,772 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,772 - ai.hybrid_extractor - INFO -   Contour 380: 98 points, color=#000000, width=2.5
+2025-11-11 11:30:05,773 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,773 - ai.hybrid_extractor - INFO -   Contour 381: 13 points, color=#000000, width=2.5
+2025-11-11 11:30:05,773 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,774 - ai.hybrid_extractor - INFO -   Contour 382: 23 points, color=#000000, width=2.5
+2025-11-11 11:30:05,774 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,775 - ai.hybrid_extractor - INFO -   Contour 383: 13 points, color=#000000, width=2.5
+2025-11-11 11:30:05,775 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,776 - ai.hybrid_extractor - INFO -   Contour 384: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,776 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,777 - ai.hybrid_extractor - INFO -   Contour 385: 13 points, color=#000000, width=2.5
+2025-11-11 11:30:05,777 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,777 - ai.hybrid_extractor - INFO -   Contour 386: 7 points, color=#000000, width=2.5
+2025-11-11 11:30:05,777 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,778 - ai.hybrid_extractor - INFO -   Contour 387: 35 points, color=#000000, width=2.5
+2025-11-11 11:30:05,778 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,778 - ai.hybrid_extractor - INFO -   Contour 388: 21 points, color=#000000, width=2.5
+2025-11-11 11:30:05,779 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,779 - ai.hybrid_extractor - INFO -   Contour 389: 11 points, color=#000000, width=2.5
+2025-11-11 11:30:05,779 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,779 - ai.hybrid_extractor - INFO -   Contour 390: 24 points, color=#000000, width=2.5
+2025-11-11 11:30:05,779 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,780 - ai.hybrid_extractor - INFO -   Contour 391: 30 points, color=#000000, width=2.5
+2025-11-11 11:30:05,780 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,780 - ai.hybrid_extractor - INFO -   Contour 392: 2 points, color=#000000, width=2.5
+2025-11-11 11:30:05,781 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,781 - ai.hybrid_extractor - INFO -   Contour 393: 8 points, color=#000000, width=2.5
+2025-11-11 11:30:05,782 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,782 - ai.hybrid_extractor - INFO -   Contour 394: 11 points, color=#000000, width=2.5
+2025-11-11 11:30:05,782 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,783 - ai.hybrid_extractor - INFO -   Contour 395: 11 points, color=#000000, width=2.5
+2025-11-11 11:30:05,784 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,785 - ai.hybrid_extractor - INFO -   Contour 396: 3 points, color=#000000, width=2.5
+2025-11-11 11:30:05,785 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,786 - ai.hybrid_extractor - INFO -   Contour 397: 5 points, color=#000000, width=2.5
+2025-11-11 11:30:05,786 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,787 - ai.hybrid_extractor - INFO -   Contour 398: 12 points, color=#000000, width=2.5
+2025-11-11 11:30:05,787 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,787 - ai.hybrid_extractor - INFO -   Contour 399: 39 points, color=#000000, width=2.5
+2025-11-11 11:30:05,788 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,788 - ai.hybrid_extractor - INFO -   Contour 400: 12 points, color=#000000, width=2.5
+2025-11-11 11:30:05,788 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,789 - ai.hybrid_extractor - INFO -   Contour 401: 7 points, color=#000000, width=2.5
+2025-11-11 11:30:05,789 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,789 - ai.hybrid_extractor - INFO -   Contour 402: 5 points, color=#000000, width=2.5
+2025-11-11 11:30:05,789 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,789 - ai.hybrid_extractor - INFO -   Contour 403: 5 points, color=#000000, width=2.5
+2025-11-11 11:30:05,790 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,790 - ai.hybrid_extractor - INFO -   Contour 404: 12 points, color=#000000, width=2.5
+2025-11-11 11:30:05,791 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,791 - ai.hybrid_extractor - INFO -   Contour 405: 21 points, color=#000000, width=2.5
+2025-11-11 11:30:05,792 - ai.hybrid_extractor - INFO -   Config colorize_from_source: False
+2025-11-11 11:30:05,792 - ai.hybrid_extractor - INFO -   Contour 406: 41 points, color=#000000, width=2.5
+2025-11-11 11:30:05,793 - ai.hybrid_extractor - INFO - Generated 390 strokes
+2025-11-11 11:30:05,794 - ai.hybrid_extractor - INFO - Number of strokes generated: 390
+2025-11-11 11:30:05,794 - ai.hybrid_extractor - INFO - ============================================================
+2025-11-11 11:30:05,795 - ai.hybrid_extractor - INFO - ✓ PROCESSING COMPLETE in 29.19s
+2025-11-11 11:30:05,795 - ai.hybrid_extractor - INFO - ============================================================
+2025-11-11 11:30:05,796 - __main__ - INFO - Progress: 60% - Converting Strokes - Processing 390 detected strokes
+2025-11-11 11:30:05,859 - __main__ - INFO - Hybrid extractor found 390 strokes in 29.19s
+2025-11-11 11:30:05,859 - __main__ - INFO - Progress: 80% - Generating SVG - Creating vector graphics
+2025-11-11 11:30:06,054 - ai.vectorize - INFO - Generated SVG with 390 strokes (1920x1080)
+2025-11-11 11:30:06,055 - __main__ - INFO - Progress: 90% - Generating InkML - Creating OneNote-compatible format
+2025-11-11 11:30:06,072 - ai.inkml_export - INFO - Generated InkML with 390 traces (1 colors)
+2025-11-11 11:30:06,072 - __main__ - INFO - Generated SVG: 368571 chars
+2025-11-11 11:30:06,073 - __main__ - INFO - Generated InkML: 85128 chars
+2025-11-11 11:30:06,073 - __main__ - INFO - First 500 chars of SVG:
+<?xml version="1.0" ?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080">
+  <g id="whiteboard-strokes">
+    <path id="stroke-0" d="M 1267.00,1078.00 C 1266.50,1078.08 1261.08,1078.92 1261.00,1079.00 C 1260.92,1079.08 1265.58,1079.00 1266.00,1079.00" stroke="#000000" stroke-width="2.00" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    <path id="stroke-1" d="M 1269.00,1072.00 L 1269.00,1073.00" stroke="#000000" stroke-width="2.00" stroke-lin
+2025-11-11 11:30:06,073 - __main__ - INFO - Progress: 100% - Complete - 390 strokes processed
+INFO:     127.0.0.1:54076 - "POST /process-image HTTP/1.1" 200 OK
+index.jsx loaded
+app.bundle.js:2 React: Object
+app.bundle.js:2 createRoot: ƒ (e,n){if(!Gs(e))throw Error(o(299));var t=!1,r="",a=qs;return null!=n&&(!0===n.unstable_strictMode&&(t=!0),void 0!==n.identifierPrefix&&(r=n.identifierPrefix),void 0!==n.onRecoverableError&&(a=n.onRe…
+app.bundle.js:2 Container element: <div id=​"root">​…​</div>​flex
+app.bundle.js:2 Root created, rendering App...
+app.bundle.js:2 App rendered
+app.bundle.js:2 App render - cameraActive: false processing: false result: null
+app.bundle.js:2 App render - cameraActive: false processing: false result: null
+VM4 sandbox_bundle:2 Electron Security Warning (Disabled webSecurity) This renderer process has "webSecurity" disabled. This
+  exposes users of this app to severe security risks.
+
+For more information and help, consult
+https://electronjs.org/docs/tutorial/security.
+This warning will not show up
+once the app is packaged.
+(anonymous) @ VM4 sandbox_bundle:2
+VM4 sandbox_bundle:2 Electron Security Warning (allowRunningInsecureContent) This renderer process has "allowRunningInsecureContent"
+  enabled. This exposes users of this app to severe security risks.
+
+  
+For more information and help, consult
+https://electronjs.org/docs/tutorial/security.
+This warning will not show up
+once the app is packaged.
+(anonymous) @ VM4 sandbox_bundle:2
+app.bundle.js:2 ✓ Backend connected successfully!
+app.bundle.js:2 Checking for existing OneNote authentication...
+app.bundle.js:2 App render - cameraActive: false processing: false result: null
+app.bundle.js:2 Auto-logging in user: Microsoft Account
+app.bundle.js:2 📦 Loading cached OneNote hierarchy...
+app.bundle.js:2 ✅ Loaded complete hierarchy with 0 notebooks from cache
+app.bundle.js:2 🔍 Cache structure sample:
+app.bundle.js:2 Restored destination: Computer Science Major Notes → Week 7 10-13 - 10-19
+app.bundle.js:2 App render - cameraActive: false processing: false result: null
+app.bundle.js:2 startCamera function called
+app.bundle.js:2 Requesting camera access at maximum resolution...
+app.bundle.js:2 App render - cameraActive: false processing: false result: null
+app.bundle.js:2 Camera stream obtained: MediaStream
+app.bundle.js:2 Camera resolution: 3840x2160
+app.bundle.js:2 Camera activated, state updated
+app.bundle.js:2 App render - cameraActive: true processing: false result: null
+app.bundle.js:2 Attaching stream to video element
+app.bundle.js:2 Video playing successfully
+app.bundle.js:2 capturePhoto called
+app.bundle.js:2 Video dimensions: 3840 x 2160
+app.bundle.js:2 Photo captured, canvas size: 3840 x 2160
+app.bundle.js:2 processImage called
+app.bundle.js:2 Creating blob from canvas...
+app.bundle.js:2 App render - cameraActive: false processing: true result: null
+app.bundle.js:2 [POLL] Progress data: Object
+app.bundle.js:2 [POLL] Progress not active, data: Object
+app.bundle.js:2 Blob created, size: 3127793 bytes
+app.bundle.js:2 Sending request to backend...
+app.bundle.js:2 [POLL] Progress data: Object
+app.bundle.js:2 [POLL] Progress not active, data: Object
+app.bundle.js:2 [POLL] Progress data: {active: true, step: 'Reading Image', progress: 20, details: 'Decoding uploaded file'}
+app.bundle.js:2 [POLL] Updating UI: 20% - Reading Image
+app.bundle.js:2 App render - cameraActive: false processing: true result: null
+app.bundle.js:2 Response status: 200
+app.bundle.js:2 Processing complete, result: {success: true, svg: '<?xml version="1.0" ?>\n<svg xmlns="http://www.w3.o…oke-linejoin="round" fill="none"/>\n  </g>\n</svg>\n', inkml: '<?xml version="1.0" ?>\n<ink xmlns="http://www.w3.o…5 9 1837 2 1797 1</trace>\n  </traceGroup>\n</ink>\n', metadata: {…}}
+app.bundle.js:2 App render - cameraActive: false processing: false result: {success: true, svg: '<?xml version="1.0" ?>\n<svg xmlns="http://www.w3.o…oke-linejoin="round" fill="none"/>\n  </g>\n</svg>\n', inkml: '<?xml version="1.0" ?>\n<ink xmlns="http://www.w3.o…5 9 1837 2 1797 1</trace>\n  </traceGroup>\n</ink>\n', metadata: {…}, previewUrl: 'blob:file:///f3c70dd2-dd72-4de6-8895-08881e817e3f'}
+app.bundle.js:2 [POLL] Progress data: {active: false, step: '', progress: 0, details: ''}
+app.bundle.js:2 [POLL] Progress not active, data: {active: false, step: '', progress: 0, details: ''}
+app.bundle.js:2 [POLL] Progress data: {active: false, step: '', progress: 0, details: ''}
+app.bundle.js:2 [POLL] Progress not active, data: {active: false, step: '', progress: 0, details: ''}

@@ -32,6 +32,8 @@ from datetime import datetime
 import traceback
 import json
 import os
+import asyncio
+from concurrent.futures import ThreadPoolExecutor
 
 # Load configuration
 from config import (
@@ -47,8 +49,35 @@ logger = logging.getLogger(__name__)
 # Validate configuration on startup
 validate_config()
 
+# Thread pool for CPU-intensive processing (keeps async event loop responsive)
+executor = ThreadPoolExecutor(max_workers=1)  # Single worker to prevent concurrent processing
+
 # Lazy import for heavy AI dependencies - only load when needed
 _extractor = None
+
+# Global progress tracker for real-time processing updates
+processing_progress = {
+    "active": False,
+    "step": "",
+    "progress": 0,  # 0-100
+    "details": ""
+}
+
+def update_progress(step: str, progress: int, details: str = ""):
+    """Update global processing progress"""
+    processing_progress["active"] = True
+    processing_progress["step"] = step
+    processing_progress["progress"] = progress
+    processing_progress["details"] = details
+    logger.info(f"Progress: {progress}% - {step} - {details}")
+
+def clear_progress():
+    """Clear processing progress"""
+    processing_progress["active"] = False
+    processing_progress["step"] = ""
+    processing_progress["progress"] = 0
+    processing_progress["details"] = ""
+
 def get_ai_dependencies():
     """Lazy load heavy AI dependencies only when processing images"""
     global _extractor
@@ -130,6 +159,14 @@ async def health_check():
         "onenote_available": ONENOTE_AVAILABLE,
         "ai_models_loaded": _extractor is not None
     }
+
+
+@app.get("/progress")
+async def get_progress():
+    """Get current processing progress in real-time"""
+    current_state = dict(processing_progress)  # Make a copy
+    logger.info(f"[PROGRESS ENDPOINT] GET /progress called - returning: {current_state}")
+    return current_state
 
 
 @app.get("/onenote/config")
@@ -604,72 +641,83 @@ async def send_to_onenote(request: dict) -> Dict:
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@app.post("/process-image")
-async def process_image(file: UploadFile = File(...)) -> Dict:
+def _process_image_worker(img: np.ndarray) -> Dict:
     """
-    Process whiteboard image and return SVG vectorization
-    Uses Hybrid Extractor for fast 1-3 second processing
+    Synchronous worker function for CPU-intensive image processing.
+    Runs in thread pool to keep async event loop responsive.
     """
     try:
-        # Lazy load AI dependencies
+        # Lazy load AI dependencies (10-15%)
+        update_progress("Loading AI Models", 10, "Initializing neural networks")
         ai_deps = get_ai_dependencies()
         extractor = ai_deps['extractor']
+        update_progress("Loading AI Models", 12, "Loading stroke extractor")
         strokes_to_svg = ai_deps['strokes_to_svg']
+        update_progress("Loading AI Models", 14, "Loading vectorization modules")
         strokes_to_inkml = ai_deps['strokes_to_inkml']
         Stroke = ai_deps['Stroke']
+        update_progress("Loading AI Models", 15, "AI models ready")
         
-        # Read uploaded image
-        contents = await file.read()
-        nparr = np.frombuffer(contents, np.uint8)
-        img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+        # Create progress callback for tile processing (20-75%)
+        def tile_progress_callback(progress_pct: int, details: str):
+            """Callback for tile-level progress updates (20-75%)"""
+            logger.info(f"[TILE CALLBACK] {progress_pct}% - {details}")
+            update_progress("AI Processing", progress_pct, details)
         
-        if img is None:
-            raise HTTPException(status_code=400, detail="Invalid image file")
-        
-        logger.info(f"Received image: {img.shape}")
-        
-        # Process with Hybrid Extractor
+        # Process with Hybrid Extractor (will report 20-75% via callback)
+        update_progress("AI Processing", 20, f"Starting analysis of {img.shape[1]}x{img.shape[0]} image")
         logger.info("Processing with Hybrid Extractor...")
-        result = extractor.process_image(img)
+        result = extractor.process_image(img, progress_callback=tile_progress_callback)
         
         if result is None or 'strokes' not in result:
-            raise HTTPException(
-                status_code=500,
-                detail="Hybrid extractor failed to process image"
-            )
+            raise ValueError("Hybrid extractor failed to process image")
         
-        # Convert hybrid strokes to Stroke objects
+        # Convert hybrid strokes to Stroke objects (75-80%)
+        update_progress("Converting Strokes", 75, f"Processing {len(result['strokes'])} detected strokes")
         all_strokes = []
-        for s in result['strokes']:
+        total_strokes = len(result['strokes'])
+        for idx, s in enumerate(result['strokes']):
             stroke = Stroke(
                 points=np.array(s['points'], dtype=np.float32),
                 color=s['color'],
                 thickness=s.get('thickness', 2.0)
             )
             all_strokes.append(stroke)
+            # Update every 10% of strokes
+            if total_strokes > 100 and idx % (total_strokes // 10) == 0:
+                progress = 75 + int((idx / total_strokes) * 5)
+                update_progress("Converting Strokes", progress, f"Processed {idx}/{total_strokes} strokes")
         
+        update_progress("Converting Strokes", 80, f"Converted {len(all_strokes)} strokes")
         logger.info(f"Hybrid extractor found {len(all_strokes)} strokes in {result['metadata']['processing_time']:.2f}s")
         
-        # Generate both SVG and InkML
+        # Generate SVG (80-90%)
+        update_progress("Generating SVG", 82, "Preparing vector graphics")
         svg_output = strokes_to_svg(
             all_strokes,
             width=result['rectified'].shape[1],
             height=result['rectified'].shape[0],
-            background_color="none"  # Transparent background
+            background_color="none"
         )
+        update_progress("Generating SVG", 90, f"SVG created ({len(svg_output)} bytes)")
         
+        # Generate InkML (90-98%)
+        update_progress("Generating InkML", 92, "Creating OneNote-compatible format")
         inkml_output = strokes_to_inkml(
             all_strokes,
             width=result['rectified'].shape[1],
             height=result['rectified'].shape[0]
         )
+        update_progress("Generating InkML", 98, f"InkML created ({len(inkml_output)} bytes)")
         
         # Log output info
         logger.info(f"Generated SVG: {len(svg_output)} chars")
         logger.info(f"Generated InkML: {len(inkml_output)} chars")
         logger.info(f"First 500 chars of SVG:\n{svg_output[:500]}")
         
-        return JSONResponse(content={
+        update_progress("Complete", 100, f"{len(all_strokes)} strokes processed successfully")
+        
+        return {
             "success": True,
             "svg": svg_output,
             "inkml": inkml_output,
@@ -680,13 +728,55 @@ async def process_image(file: UploadFile = File(...)) -> Dict:
                 "image_size": {
                     "width": result['rectified'].shape[1],
                     "height": result['rectified'].shape[0]
-                }
+                },
+                "colors_detected": len(set(s['color'] for s in result['strokes']))
             }
-        })
+        }
+    except Exception as e:
+        clear_progress()
+        logger.error(f"Worker error: {e}")
+        logger.error(traceback.format_exc())
+        raise
+
+
+@app.post("/process-image")
+async def process_image(file: UploadFile = File(...)) -> Dict:
+    """
+    Process whiteboard image and return SVG vectorization
+    Uses Hybrid Extractor running in thread pool for responsive progress updates
+    """
+    try:
+        logger.info("="*60)
+        logger.info("[PROCESS-IMAGE] Request received")
+        logger.info("="*60)
+        clear_progress()
+        logger.info("[PROCESS-IMAGE] Progress cleared")
+        update_progress("Initializing", 5, "Starting image processing")
+        logger.info("[PROCESS-IMAGE] Progress updated to 5% - Initializing")
+        
+        # Read uploaded image (async I/O, keep in main thread)
+        update_progress("Reading Image", 20, "Decoding uploaded file")
+        contents = await file.read()
+        nparr = np.frombuffer(contents, np.uint8)
+        img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+        
+        if img is None:
+            clear_progress()
+            raise HTTPException(status_code=400, detail="Invalid image file")
+        
+        logger.info(f"Received image: {img.shape}")
+        
+        # Run CPU-intensive processing in thread pool
+        loop = asyncio.get_event_loop()
+        result = await loop.run_in_executor(executor, _process_image_worker, img)
+        
+        return JSONResponse(content=result)
         
     except HTTPException:
+        clear_progress()
         raise
     except Exception as e:
+        clear_progress()
         logger.error(f"Error processing image: {e}")
         logger.error(traceback.format_exc())
         raise HTTPException(status_code=500, detail=str(e))

@@ -86,20 +86,36 @@ function actuallyStartBackend() {
         // After 5 attempts, start our own backend
         console.log('Backend not detected, starting our own...');
         
-        // Determine backend executable path
-        let backendExe;
+        // Determine backend path
+        const fs = require('fs');
         if (app.isPackaged) {
-          // Production: Use bundled backend.exe
-          backendExe = path.join(process.resourcesPath, 'backend', 'backend.exe');
-          console.log('Using bundled backend executable:', backendExe);
+          // Check for bundled backend.exe (portable build) OR Python source (light installer)
+          const backendExe = path.join(process.resourcesPath, 'backend', 'backend.exe');
+          const backendScript = path.join(process.resourcesPath, 'backend', 'app.py');
           
-          const fs = require('fs');
-          if (!fs.existsSync(backendExe)) {
-            console.error('ERROR: Backend executable not found at:', backendExe);
+          if (fs.existsSync(backendExe)) {
+            // Portable build - use bundled executable
+            console.log('Using bundled backend executable:', backendExe);
+            backendProcess = spawn(backendExe, [], {
+              cwd: path.dirname(backendExe),
+              stdio: ['ignore', 'pipe', 'pipe'],
+              detached: false
+            });
+          } else if (fs.existsSync(backendScript)) {
+            // Light installer - run Python source
+            console.log('Using Python source (light installer):', backendScript);
+            const pythonPath = 'python';
+            backendProcess = spawn(pythonPath, [backendScript], {
+              cwd: path.dirname(backendScript),
+              stdio: ['ignore', 'pipe', 'pipe'],
+              detached: false
+            });
+          } else {
+            console.error('ERROR: Backend not found at:', backendExe, 'or', backendScript);
             const { dialog } = require('electron');
             dialog.showErrorBox(
               'Backend Missing',
-              'Backend executable not found.\n\nPlease reinstall the application.'
+              'Backend files not found.\n\nPlease reinstall the application.'
             );
             return;
           }
@@ -115,37 +131,9 @@ function actuallyStartBackend() {
             stdio: ['ignore', 'pipe', 'pipe'],
             windowsHide: false
           });
-          
-          backendProcess.stdout.on('data', (data) => {
-            console.log(`Backend: ${data.toString().trim()}`);
-          });
-          
-          backendProcess.stderr.on('data', (data) => {
-            console.error(`Backend Error: ${data.toString().trim()}`);
-          });
-          
-          backendProcess.on('error', (error) => {
-            console.error(`Backend spawn error: ${error.message}`);
-          });
-          
-          backendProcess.on('close', (code) => {
-            console.log(`Backend process exited with code ${code}`);
-            if (code !== 0 && code !== null) {
-              console.error('Backend crashed - check logs for details');
-            }
-          });
-          
-          return; // Done for dev mode
         }
         
-        // Production: Start backend.exe
-        console.log('Spawning backend executable...');
-        backendProcess = spawn(backendExe, [], {
-          cwd: path.dirname(backendExe),
-          stdio: ['ignore', 'pipe', 'pipe'],
-          windowsHide: false
-        });
-        
+        // Set up backend process logging
         backendProcess.stdout.on('data', (data) => {
           console.log(`Backend: ${data.toString().trim()}`);
         });
@@ -156,11 +144,6 @@ function actuallyStartBackend() {
         
         backendProcess.on('error', (error) => {
           console.error(`Backend spawn error: ${error.message}`);
-          const { dialog } = require('electron');
-          dialog.showErrorBox(
-            'Backend Failed',
-            `Failed to start backend: ${error.message}\n\nPlease check the logs.`
-          );
         });
         
         backendProcess.on('close', (code) => {
@@ -172,6 +155,7 @@ function actuallyStartBackend() {
       }
     });
     
+    req.setTimeout(1000);
     req.end();
   }
   
