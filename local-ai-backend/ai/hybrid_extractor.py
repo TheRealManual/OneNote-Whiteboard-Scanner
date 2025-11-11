@@ -314,15 +314,16 @@ class HybridStrokeExtractor:
         if quad is None:
             logger.info("No quad detected - using full image as whiteboard")
             
-            # Check if we should use fixed canvas or native resolution
+            # Check if we should use native resolution
+            preserve_native = CONFIG.get('preserve_native_resolution', False)
             rectified_canvas = CONFIG.get('rectified_canvas')
             
-            if rectified_canvas is None:
-                # Native resolution mode - return image as-is
-                logger.info(f"Using native resolution: {img.shape[1]}x{img.shape[0]}")
+            if preserve_native or rectified_canvas is None:
+                # Native resolution mode - return image as-is for maximum quality
+                logger.info(f"Using native resolution: {img.shape[1]}×{img.shape[0]} (preserve_native_resolution=True)")
                 return img, None
             
-            # Legacy: use configured canvas aspect ratio
+            # Legacy: use configured canvas aspect ratio (for OneNote app integration)
             canvas_w, canvas_h = rectified_canvas
             logger.info(f"Configured canvas size: {canvas_w}×{canvas_h}")
             
@@ -477,25 +478,43 @@ class HybridStrokeExtractor:
         logger.info("Starting hybrid stroke extraction...")
         start_time = time.time()
         
-        # Step 1: Classical CV extraction (fast, always run)
-        logger.info("Running classical CV extraction...")
-        classical_start = time.time()
-        classical_mask = self._extract_classical(img)
-        classical_time = time.time() - classical_start
-        logger.info(f"Classical extraction: {np.count_nonzero(classical_mask)} pixels in {classical_time*1000:.0f}ms")
+        # Step 1: Check if we're using ML-only mode (smooth tiling ignores classical)
+        use_tile_seg = cfg.get('use_tile_segmentation', False) and self.tile_seg and self.tile_seg.enabled
+        
+        if use_tile_seg:
+            # ML-only mode: Skip classical CV to save ~2-3 seconds
+            logger.info("Using ML-only mode (skipping classical CV for performance)")
+            classical_mask = None
+        else:
+            # Classical CV extraction (fallback mode)
+            logger.info("Running classical CV extraction...")
+            classical_start = time.time()
+            classical_mask = self._extract_classical(img)
+            classical_time = time.time() - classical_start
+            logger.info(f"Classical extraction: {np.count_nonzero(classical_mask)} pixels in {classical_time*1000:.0f}ms")
         
         # Step 2: Tile-aware segmentation refinement (if enabled)
-        if cfg.get('use_tile_segmentation', False) and self.tile_seg and self.tile_seg.enabled:
-            logger.info("Refining with tile-aware segmentation...")
+        if use_tile_seg:
+            logger.info("Refining with SMOOTH tile-based segmentation (Gaussian blending)...")
             tile_start = time.time()
             
-            tile_size = cfg.get('tile_size', 128)
-            refined_mask = self.tile_seg.refine_mask(classical_mask, img, tile_size=tile_size, progress_callback=progress_callback)
+            # Use smooth tiled inference with 50% overlap (matches training test)
+            overlap = cfg.get('tile_overlap', 0.5)  # 50% overlap for smooth blending
+            refined_mask = self.tile_seg.refine_mask(
+                classical_mask, 
+                img, 
+                overlap=overlap,
+                use_smooth_tiling=True,  # Enable smooth Gaussian blending
+                progress_callback=progress_callback
+            )
             
             tile_time = time.time() - tile_start
-            logger.info(f"Tile segmentation: {np.count_nonzero(refined_mask)} pixels in {tile_time*1000:.0f}ms")
+            logger.info(f"Smooth tile segmentation: {np.count_nonzero(refined_mask)} pixels in {tile_time*1000:.0f}ms")
             
+            # ML output is already high-quality - skip aggressive cleanup that degrades it
+            logger.info("Using ML output directly (skipping morphology/cleanup that fills holes)")
             final_mask = refined_mask
+            use_ml_output = True
         
         # Step 3: Legacy U2-Net support (if tile segmentation not available)
         elif cfg.get('use_u2net', False) and self.u2net_session:
@@ -503,18 +522,25 @@ class HybridStrokeExtractor:
             ai_mask = self._extract_u2net(img)
             logger.info(f"AI mask: {ai_mask.shape}, non-zero: {np.count_nonzero(ai_mask)}")
             final_mask = cv2.bitwise_or(classical_mask, ai_mask)
+            use_ml_output = False
         
         else:
             logger.info("No AI refinement - using classical only")
             final_mask = classical_mask
+            use_ml_output = False
         
-        # Step 4: Final cleanup
-        logger.info("Applying final cleanup...")
-        final_mask = self._clean_mask(final_mask)
-        
-        # Smooth jaggies and remove noise
-        final_mask = cv2.medianBlur(final_mask, 3)
-        _, final_mask = cv2.threshold(final_mask, 127, 255, cv2.THRESH_BINARY)
+        # Step 4: Final cleanup (ONLY for classical CV output)
+        if not use_ml_output:
+            logger.info("Applying final cleanup (classical CV output)...")
+            final_mask = self._clean_mask(final_mask)
+            
+            # Smooth jaggies and remove noise
+            final_mask = cv2.medianBlur(final_mask, 3)
+            _, final_mask = cv2.threshold(final_mask, 127, 255, cv2.THRESH_BINARY)
+        else:
+            logger.info("Skipping cleanup - preserving high-quality ML output")
+            # Just ensure binary threshold
+            _, final_mask = cv2.threshold(final_mask, 127, 255, cv2.THRESH_BINARY)
         
         total_time = time.time() - start_time
         logger.info(f"Hybrid extraction complete: {np.count_nonzero(final_mask)} pixels in {total_time*1000:.0f}ms")
@@ -535,9 +561,10 @@ class HybridStrokeExtractor:
             gray = cv2.absdiff(gray, bg)
             logger.info(f"Background subtracted with median blur kernel: {median_blur_size}")
         
-        # Step 2: Denoise
-        logger.info("Denoising with fastNlMeansDenoising...")
-        gray = cv2.fastNlMeansDenoising(gray, h=7)
+        # Step 2: Denoise (optional, can be slow on large images)
+        if CONFIG['illumination'].get('denoise', False):
+            logger.info("Denoising with fastNlMeansDenoising...")
+            gray = cv2.fastNlMeansDenoising(gray, h=7)
         gray = cv2.equalizeHist(gray)
         
         # Step 3: Auto-calibrate adaptive threshold (new technique)

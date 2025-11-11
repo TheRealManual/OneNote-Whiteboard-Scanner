@@ -165,7 +165,7 @@ async def health_check():
 async def get_progress():
     """Get current processing progress in real-time"""
     current_state = dict(processing_progress)  # Make a copy
-    logger.info(f"[PROGRESS ENDPOINT] GET /progress called - returning: {current_state}")
+    # Removed verbose logging - this endpoint is polled frequently
     return current_state
 
 
@@ -825,7 +825,8 @@ if __name__ == "__main__":
     import uvicorn
     print("\n" + "="*60)
     print("[OK] Backend ready! AI models will load on first use.")
-    print(f"[OK] Server starting on {HOST}:{PORT}")
+    print("[OK] Server starting on {HOST}:{PORT}")
     print("="*60 + "\n")
     logger.info(f"Starting server on {HOST}:{PORT}")
-    uvicorn.run(app, host=HOST, port=PORT, log_level="info")
+    # Disable access logs to reduce noise from frequent /progress polling
+    uvicorn.run(app, host=HOST, port=PORT, log_level="info", access_log=False)
