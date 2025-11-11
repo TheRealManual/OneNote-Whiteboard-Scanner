@@ -722,6 +722,8 @@ class HybridStrokeExtractor:
         logger.info(f"Found {len(contours)} contours")
         
         strokes = []
+        min_stroke_length = cfg.get('min_stroke_length_px', 0)
+        
         for i, contour in enumerate(contours):
             # Simplify with RDP
             epsilon = cfg.get('rdp_epsilon_px', 1.0)
@@ -730,6 +732,14 @@ class HybridStrokeExtractor:
             if len(approx) < 2:
                 logger.info(f"  Contour {i+1}: Skipped (too few points: {len(approx)})")
                 continue
+            
+            # Filter by stroke length
+            if min_stroke_length > 0:
+                points = approx.reshape(-1, 2)
+                stroke_length = sum(np.linalg.norm(points[i] - points[i-1]) for i in range(1, len(points)))
+                if stroke_length < min_stroke_length:
+                    logger.info(f"  Contour {i+1}: Skipped (length {stroke_length:.1f}px < {min_stroke_length}px)")
+                    continue
             
             # Extract color from original image
             points = approx.reshape(-1, 2)

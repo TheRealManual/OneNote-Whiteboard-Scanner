@@ -45,6 +45,7 @@
     "rdp_epsilon_px": 1.0,
     "colorize_from_source": false,
     "stroke_width_px": 2.5,
-    "transparent_bg": true
+    "transparent_bg": true,
+    "min_stroke_length_px": 15
   }
 }
