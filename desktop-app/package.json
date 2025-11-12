@@ -1,6 +1,6 @@
 {
   "name": "whiteboard-scanner",
-  "version": "1.0.0",
+  "version": "1.5.0",
   "description": "Scan and digitize whiteboards with AI processing",
   "main": "electron-main.js",
   "scripts": {
@@ -55,6 +55,7 @@
           "**/*.json",
           "**/*.txt",
           "**/*.yml",
+          "models/**/*.pts",
           ".env.example",
           "!**/__pycache__/**",
           "!**/*.pyc",
@@ -63,8 +64,11 @@
           "!models/*.pt",
           "!dist/**",
           "!venv/**",
+          "!venv-gpu/**",
           "!libs/**",
-          "!node_modules/**"
+          "!node_modules/**",
+          "!test*.py",
+          "!export*.py"
         ]
       }
     ],

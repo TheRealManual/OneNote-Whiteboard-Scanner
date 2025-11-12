@@ -822,10 +822,14 @@ class SimpleOneNoteAuth:
             
             # Convert points to himetric with pressure
             # Format: "X1 Y1 F1, X2 Y2 F2, ..."
+            # SCALE: Strokes are scaled to 30% before conversion to fit OneNote better
+            # OFFSET: Add vertical offset to push ink down below title
+            SCALE_FACTOR = 0.3
+            Y_OFFSET_PIXELS = 400  # Push ink down 400 pixels
             point_strs = []
             for pt in points:
-                x_himetric = int(pt[0] * PIXELS_TO_HIMETRIC)
-                y_himetric = int(pt[1] * PIXELS_TO_HIMETRIC)
+                x_himetric = int(pt[0] * SCALE_FACTOR * PIXELS_TO_HIMETRIC)
+                y_himetric = int((pt[1] + Y_OFFSET_PIXELS) * SCALE_FACTOR * PIXELS_TO_HIMETRIC)
                 pressure = 7168  # Mid-range pressure
                 point_strs.append(f'{x_himetric} {y_himetric} {pressure}')
             
@@ -839,13 +843,15 @@ class SimpleOneNoteAuth:
         
         inkml_data = '\n'.join(inkml_lines)
         
-        # Create HTML
+        # Create HTML with absolute positioning to place ink below title
+        # Use data-absolute-enabled and position ink container at top:200px
         html_content = f"""<html>
 <head>
 <title>{page_title}</title>
 </head>
-<body>
-<h1>{page_title}</h1>
+<body data-absolute-enabled="true">
+<div style="position:absolute; top:200px; left:50px;" data-id="inkContainer">
+</div>
 </body>
 </html>"""
         
