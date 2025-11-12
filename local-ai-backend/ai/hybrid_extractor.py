@@ -348,8 +348,9 @@ class HybridStrokeExtractor:
             
             # Resize to canvas size
             logger.info(f"Resizing from {img.shape[1]}×{img.shape[0]} to {canvas_size[0]}×{canvas_size[1]}")
-            rectified = cv2.resize(img, canvas_size)
-            logger.info(f"✓ Resized to {canvas_size} (aspect preserved)")
+            # Use INTER_AREA for better quality when downsampling (reduces artifacts on dirty whiteboards)
+            rectified = cv2.resize(img, canvas_size, interpolation=cv2.INTER_AREA)
+            logger.info(f"✓ Resized to {canvas_size} (aspect preserved, INTER_AREA interpolation)")
             return rectified, None
         
         logger.info(f"Quad detected with points: {quad}")
@@ -495,16 +496,17 @@ class HybridStrokeExtractor:
         
         # Step 2: Tile-aware segmentation refinement (if enabled)
         if use_tile_seg:
-            logger.info("Refining with SMOOTH tile-based segmentation (Gaussian blending)...")
+            logger.info("Running SMOOTH tile-based segmentation (Gaussian blending)...")
             tile_start = time.time()
             
             # Use smooth tiled inference with 50% overlap (matches training test)
             overlap = cfg.get('tile_overlap', 0.5)  # 50% overlap for smooth blending
-            refined_mask = self.tile_seg.refine_mask(
-                classical_mask, 
-                img, 
+            
+            # OPTIMIZED: Call infer_full_image_smooth directly instead of refine_mask
+            # This avoids unnecessary overhead and makes it clear we're doing ML-only
+            refined_mask = self.tile_seg.infer_full_image_smooth(
+                img,
                 overlap=overlap,
-                use_smooth_tiling=True,  # Enable smooth Gaussian blending
                 progress_callback=progress_callback
             )
             

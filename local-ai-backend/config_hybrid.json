@@ -1,12 +1,12 @@
 {
   "resize_to": null,
-  "max_dimension": 3000,
-  "preserve_native_resolution": false,
+  "max_dimension": null,
+  "preserve_native_resolution": true,
   "rectified_canvas": [2560, 1440],
   "preserve_aspect_ratio": true,
 
   "illumination": { 
-    "enabled": true, 
+    "enabled": false, 
     "blur_sigma": 31,
     "clahe": true,
     "background_subtract": false,
@@ -21,7 +21,7 @@
   },
 
   "stroke_extract": {
-    "use_classical": true,
+    "use_classical": false,
     "use_u2net": false,
     "use_tile_segmentation": true,
     "tile_overlap": 0.5,
@@ -33,9 +33,9 @@
     "auto_calibrate_threshold": false,
     "canny": [80, 200],
     "canny_structure_only": false,
-    "morph_open": 1,
-    "morph_close": 1,
-    "min_area_px": 80,
+    "morph_open": 0,
+    "morph_close": 0,
+    "min_area_px": 0,
     "min_skel_len_px": 20
   },
 

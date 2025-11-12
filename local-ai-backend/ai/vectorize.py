@@ -171,14 +171,14 @@ def catmull_rom_to_bezier(
     p1: np.ndarray,
     p2: np.ndarray,
     p3: np.ndarray,
-    tension: float = 0.5
+    tension: float = 0.3  # Reduced from 0.5 for tighter, smoother curves
 ) -> Tuple[np.ndarray, np.ndarray]:
     """
     Convert Catmull-Rom spline segment to cubic Bezier control points
     
     Args:
         p0, p1, p2, p3: Four consecutive points
-        tension: Tension parameter (0.5 = Catmull-Rom)
+        tension: Tension parameter (lower = tighter curves, 0.3 = smoother than default 0.5)
         
     Returns:
         Two control points (cp1, cp2)

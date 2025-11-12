@@ -77,11 +77,11 @@ def extract_strokes(mask: np.ndarray, color: str) -> List[Stroke]:
     try:
         strokes = []
         
-        # Find contours in the mask
+        # Find contours in the mask (CHAIN_APPROX_NONE = keep all points)
         contours, hierarchy = cv2.findContours(
             mask,
             cv2.RETR_EXTERNAL,
-            cv2.CHAIN_APPROX_SIMPLE
+            cv2.CHAIN_APPROX_NONE  # Changed from CHAIN_APPROX_SIMPLE - keep all contour points
         )
         
         logger.info(f"Found {len(contours)} contours for color {color}")
@@ -92,12 +92,28 @@ def extract_strokes(mask: np.ndarray, color: str) -> List[Stroke]:
             if area < MIN_CONTOUR_AREA or area > MAX_CONTOUR_AREA:
                 continue
             
-            # Approximate contour to reduce points
-            epsilon = 0.002 * cv2.arcLength(contour, True)
-            approx = cv2.approxPolyDP(contour, epsilon, False)
+            # Convert to stroke points (all contour points)
+            points = contour.reshape(-1, 2).astype(float)
             
-            # Convert to stroke points
-            points = approx.reshape(-1, 2).astype(float)
+            # Skip if too few points
+            if len(points) < 10:
+                continue
+            
+            # Apply HEAVY multi-pass Gaussian smoothing to create silky smooth curves
+            if len(points) >= 10:
+                # Pass 1: Strong smoothing (window 11)
+                points = smooth_stroke(points, window_size=11)
+                # Pass 2: Medium smoothing (window 7)
+                points = smooth_stroke(points, window_size=7)
+                # Pass 3: Light smoothing (window 5) to polish
+                points = smooth_stroke(points, window_size=5)
+            
+            # SIMPLIFIED TOO AGGRESSIVELY - DON'T simplify smooth curves!
+            # The Bezier curve fitting in vectorize.py will handle reduction
+            # Keeping smooth points preserves curve quality
+            # 
+            # OLD: epsilon = 0.5 threw away 90% of points and re-introduced jaggedness
+            # NEW: Skip simplification, let SVG Bezier curves do the work
             
             # Skip if too short
             if len(points) < 2:
@@ -141,7 +157,7 @@ def estimate_stroke_thickness(area: float, perimeter: float) -> float:
 
 def smooth_stroke(points: np.ndarray, window_size: int = 5) -> np.ndarray:
     """
-    Smooth stroke points using moving average
+    Smooth stroke points using Gaussian-weighted moving average
     
     Args:
         points: Array of (x, y) coordinates
@@ -155,11 +171,22 @@ def smooth_stroke(points: np.ndarray, window_size: int = 5) -> np.ndarray:
     
     smoothed = np.copy(points).astype(float)
     
+    # Create Gaussian weights for better smoothing
+    sigma = window_size / 3.0
+    weights = np.exp(-0.5 * ((np.arange(window_size) - window_size // 2) / sigma) ** 2)
+    weights = weights / weights.sum()
+    
     for i in range(len(points)):
         start = max(0, i - window_size // 2)
         end = min(len(points), i + window_size // 2 + 1)
         
-        smoothed[i] = np.mean(points[start:end], axis=0)
+        # Get window and corresponding weights
+        window = points[start:end]
+        window_weights = weights[window_size // 2 - (i - start):window_size // 2 + (end - i)]
+        window_weights = window_weights / window_weights.sum()
+        
+        # Weighted average
+        smoothed[i] = np.average(window, axis=0, weights=window_weights)
     
     return smoothed
 
