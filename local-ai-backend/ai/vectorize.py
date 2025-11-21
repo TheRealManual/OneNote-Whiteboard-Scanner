@@ -69,30 +69,50 @@ def strokes_to_svg(
 
 def stroke_to_path_element(stroke: Stroke, stroke_id: str = None) -> Element:
     """
-    Convert a single stroke to an SVG path element
+    Convert a Stroke object to an SVG path element
     
     Args:
         stroke: Stroke object
         stroke_id: Optional ID for the path element
         
     Returns:
-        SVG path Element
+        XML Element for the path
     """
     path = Element('path')
     
     if stroke_id:
         path.set('id', stroke_id)
     
-    # Generate path data string
-    path_data = points_to_path_data(stroke.points)
+    # Generate path data string - handle multi-path with holes
+    if hasattr(stroke, 'paths') and stroke.paths:
+        # Multiple paths (e.g., outer contour + holes)
+        path_data_parts = []
+        for p in stroke.paths:
+            path_data_parts.append(points_to_path_data(np.array(p['points'])))
+        path_data = ' '.join(path_data_parts)
+    else:
+        # Single path
+        path_data = points_to_path_data(stroke.points)
     path.set('d', path_data)
     
     # Set stroke attributes
-    path.set('stroke', stroke.color)
-    path.set('stroke-width', f'{stroke.thickness:.2f}')
-    path.set('stroke-linecap', 'round')
-    path.set('stroke-linejoin', 'round')
-    path.set('fill', 'none')
+    # Check if this is a filled path (width=0 indicates filled)
+    is_filled = hasattr(stroke, 'filled') and stroke.filled or stroke.thickness == 0
+    
+    if is_filled:
+        # Filled path - set fill color and no stroke
+        path.set('fill', stroke.color)
+        path.set('stroke', 'none')
+        # Use evenodd fill rule to properly handle holes
+        if hasattr(stroke, 'fill_rule') and stroke.fill_rule:
+            path.set('fill-rule', stroke.fill_rule)
+    else:
+        # Stroked path - normal stroke styling
+        path.set('stroke', stroke.color)
+        path.set('stroke-width', f'{stroke.thickness:.2f}')
+        path.set('stroke-linecap', 'round')
+        path.set('stroke-linejoin', 'round')
+        path.set('fill', 'none')
     
     # Add opacity for lighter colors
     if should_add_opacity(stroke.color):

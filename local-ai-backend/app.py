@@ -678,9 +678,12 @@ def _process_image_worker(img: np.ndarray) -> Dict:
         total_strokes = len(result['strokes'])
         for idx, s in enumerate(result['strokes']):
             stroke = Stroke(
-                points=np.array(s['points'], dtype=np.float32),
+                points=np.array(s['points'], dtype=np.float32) if 'points' in s else None,
+                paths=s.get('paths'),
                 color=s['color'],
-                thickness=s.get('thickness', 2.0)
+                thickness=s.get('width', s.get('thickness', 2.0)),
+                filled=s.get('filled', False),
+                fill_rule=s.get('fill_rule')
             )
             all_strokes.append(stroke)
             # Update every 10% of strokes

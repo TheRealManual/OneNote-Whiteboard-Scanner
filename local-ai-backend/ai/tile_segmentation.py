@@ -356,12 +356,24 @@ class TileSegmentation:
         # Create Gaussian weight map for smooth blending
         weight_map = self.create_gaussian_weight_map(tile_h, tile_w)
         
-        # Calculate grid
-        tiles_h = (H - tile_h) // stride_h + 1
-        tiles_w = (W - tile_w) // stride_w + 1
+        # Calculate grid - ensure at least 1 tile even if image is smaller
+        if H < tile_h:
+            # Image shorter than tile - process as single row
+            tiles_h = 1
+            stride_h = H  # Don't repeat tiles vertically
+        else:
+            tiles_h = (H - tile_h) // stride_h + 1
+        
+        if W < tile_w:
+            # Image narrower than tile - process as single column
+            tiles_w = 1
+            stride_w = W  # Don't repeat tiles horizontally
+        else:
+            tiles_w = (W - tile_w) // stride_w + 1
+        
         total_tiles = tiles_h * tiles_w
         
-        # Add edge tiles
+        # Add edge tiles (only if image is larger than covered area)
         if W > tiles_w * stride_w:
             total_tiles += tiles_h
         if H > tiles_h * stride_h:
@@ -383,10 +395,18 @@ class TileSegmentation:
         tile_count = 0
         
         # Process main grid
-        for y in range(0, H - tile_h + 1, stride_h):
-            for x in range(0, W - tile_w + 1, stride_w):
+        for y in range(0, max(1, H - tile_h + 1), stride_h):
+            for x in range(0, max(1, W - tile_w + 1), stride_w):
+                # Calculate actual tile region
+                y_start = max(0, y)
+                y_end = min(H, y + tile_h)
+                x_start = max(0, x)
+                x_end = min(W, x + tile_w)
+                actual_h = y_end - y_start
+                actual_w = x_end - x_start
+                
                 # Extract tile
-                tile_img = img[y:y+tile_h, x:x+tile_w]
+                tile_img = img[y_start:y_end, x_start:x_end]
                 
                 # Convert BGR to RGB
                 tile_rgb = cv2.cvtColor(tile_img, cv2.COLOR_BGR2RGB)
@@ -414,9 +434,17 @@ class TileSegmentation:
                 # Extract stroke class (class 1 for binary segmentation)
                 stroke_prob = np.argmax(pred, axis=0).astype(np.float32)
                 
+                # Resize prediction and weight map to match actual tile size
+                if actual_h != tile_h or actual_w != tile_w:
+                    stroke_prob_resized = cv2.resize(stroke_prob, (actual_w, actual_h), interpolation=cv2.INTER_LINEAR)
+                    weight_map_resized = cv2.resize(weight_map, (actual_w, actual_h), interpolation=cv2.INTER_LINEAR)
+                else:
+                    stroke_prob_resized = stroke_prob
+                    weight_map_resized = weight_map
+                
                 # Add weighted prediction
-                prediction_sum[y:y+tile_h, x:x+tile_w] += stroke_prob * weight_map
-                weight_sum[y:y+tile_h, x:x+tile_w] += weight_map
+                prediction_sum[y_start:y_end, x_start:x_end] += stroke_prob_resized * weight_map_resized
+                weight_sum[y_start:y_end, x_start:x_end] += weight_map_resized
                 
                 tile_count += 1
                 if progress_callback and tile_count % 5 == 0:
@@ -427,7 +455,15 @@ class TileSegmentation:
         if W > tiles_w * stride_w:
             x = W - tile_w
             for y in range(0, H - tile_h + 1, stride_h):
-                tile_img = img[y:y+tile_h, x:x+tile_w]
+                # Calculate actual tile region
+                y_start = max(0, y)
+                y_end = min(H, y + tile_h)
+                x_start = max(0, x)
+                x_end = min(W, x + tile_w)
+                actual_h = y_end - y_start
+                actual_w = x_end - x_start
+                
+                tile_img = img[y_start:y_end, x_start:x_end]
                 tile_rgb = cv2.cvtColor(tile_img, cv2.COLOR_BGR2RGB)
                 tile_pil = Image.fromarray(tile_rgb)
                 
@@ -446,15 +482,31 @@ class TileSegmentation:
                 pred = outputs[0][0]
                 stroke_prob = np.argmax(pred, axis=0).astype(np.float32)
                 
-                prediction_sum[y:y+tile_h, x:x+tile_w] += stroke_prob * weight_map
-                weight_sum[y:y+tile_h, x:x+tile_w] += weight_map
+                # Resize prediction and weight map to match actual tile size
+                if actual_h != tile_h or actual_w != tile_w:
+                    stroke_prob_resized = cv2.resize(stroke_prob, (actual_w, actual_h), interpolation=cv2.INTER_LINEAR)
+                    weight_map_resized = cv2.resize(weight_map, (actual_w, actual_h), interpolation=cv2.INTER_LINEAR)
+                else:
+                    stroke_prob_resized = stroke_prob
+                    weight_map_resized = weight_map
+                
+                prediction_sum[y_start:y_end, x_start:x_end] += stroke_prob_resized * weight_map_resized
+                weight_sum[y_start:y_end, x_start:x_end] += weight_map_resized
                 tile_count += 1
         
         # Process bottom edge
         if H > tiles_h * stride_h:
             y = H - tile_h
             for x in range(0, W - tile_w + 1, stride_w):
-                tile_img = img[y:y+tile_h, x:x+tile_w]
+                # Calculate actual tile region
+                y_start = max(0, y)
+                y_end = min(H, y + tile_h)
+                x_start = max(0, x)
+                x_end = min(W, x + tile_w)
+                actual_h = y_end - y_start
+                actual_w = x_end - x_start
+                
+                tile_img = img[y_start:y_end, x_start:x_end]
                 tile_rgb = cv2.cvtColor(tile_img, cv2.COLOR_BGR2RGB)
                 tile_pil = Image.fromarray(tile_rgb)
                 
@@ -473,15 +525,32 @@ class TileSegmentation:
                 pred = outputs[0][0]
                 stroke_prob = np.argmax(pred, axis=0).astype(np.float32)
                 
-                prediction_sum[y:y+tile_h, x:x+tile_w] += stroke_prob * weight_map
-                weight_sum[y:y+tile_h, x:x+tile_w] += weight_map
+                # Resize prediction and weight map to match actual tile size
+                if actual_h != tile_h or actual_w != tile_w:
+                    stroke_prob_resized = cv2.resize(stroke_prob, (actual_w, actual_h), interpolation=cv2.INTER_LINEAR)
+                    weight_map_resized = cv2.resize(weight_map, (actual_w, actual_h), interpolation=cv2.INTER_LINEAR)
+                else:
+                    stroke_prob_resized = stroke_prob
+                    weight_map_resized = weight_map
+                
+                prediction_sum[y_start:y_end, x_start:x_end] += stroke_prob_resized * weight_map_resized
+                weight_sum[y_start:y_end, x_start:x_end] += weight_map_resized
                 tile_count += 1
         
         # Process bottom-right corner
         if W > tiles_w * stride_w and H > tiles_h * stride_h:
             x = W - tile_w
             y = H - tile_h
-            tile_img = img[y:y+tile_h, x:x+tile_w]
+            
+            # Calculate actual tile region
+            y_start = max(0, y)
+            y_end = min(H, y + tile_h)
+            x_start = max(0, x)
+            x_end = min(W, x + tile_w)
+            actual_h = y_end - y_start
+            actual_w = x_end - x_start
+            
+            tile_img = img[y_start:y_end, x_start:x_end]
             tile_rgb = cv2.cvtColor(tile_img, cv2.COLOR_BGR2RGB)
             tile_pil = Image.fromarray(tile_rgb)
             
@@ -500,8 +569,16 @@ class TileSegmentation:
             pred = outputs[0][0]
             stroke_prob = np.argmax(pred, axis=0).astype(np.float32)
             
-            prediction_sum[y:y+tile_h, x:x+tile_w] += stroke_prob * weight_map
-            weight_sum[y:y+tile_h, x:x+tile_w] += weight_map
+            # Resize prediction and weight map to match actual tile size
+            if actual_h != tile_h or actual_w != tile_w:
+                stroke_prob_resized = cv2.resize(stroke_prob, (actual_w, actual_h), interpolation=cv2.INTER_LINEAR)
+                weight_map_resized = cv2.resize(weight_map, (actual_w, actual_h), interpolation=cv2.INTER_LINEAR)
+            else:
+                stroke_prob_resized = stroke_prob
+                weight_map_resized = weight_map
+            
+            prediction_sum[y_start:y_end, x_start:x_end] += stroke_prob_resized * weight_map_resized
+            weight_sum[y_start:y_end, x_start:x_end] += weight_map_resized
             tile_count += 1
         
         # Normalize by weights (weighted average blending)

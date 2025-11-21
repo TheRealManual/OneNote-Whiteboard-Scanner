@@ -40,12 +40,15 @@
   },
 
   "vectorize": {
-    "skeletonize": true,
+    "skeletonize": false,
     "gap_close_px": 4,
-    "rdp_epsilon_px": 1.0,
+    "rdp_epsilon_px": 0.3,
     "colorize_from_source": false,
-    "stroke_width_px": 2.5,
+    "stroke_width_px": 1.0,
     "transparent_bg": true,
-    "min_stroke_length_px": 15
+    "min_stroke_length_px": 0,
+    "min_area_px": 0,
+    "trace_filled_paths": false,
+    "use_contour_centerline": true
   }
 }

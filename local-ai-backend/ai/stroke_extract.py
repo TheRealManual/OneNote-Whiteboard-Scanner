@@ -20,12 +20,25 @@ logger = logging.getLogger(__name__)
 class Stroke:
     """Represents a single stroke with its properties"""
     
-    def __init__(self, points: np.ndarray, color: str, thickness: float = 2.0):
-        self.points = points  # Array of (x, y) coordinates
+    def __init__(self, points: np.ndarray = None, color: str = '#000000', thickness: float = 2.0, filled: bool = False, paths: list = None, fill_rule: str = None):
+        self.points = points  # Array of (x, y) coordinates (for single path)
+        self.paths = paths    # List of path dicts (for multi-path with holes)
         self.color = color    # Hex color string
         self.thickness = thickness
-        self.length = self._calculate_length()
-        self.bbox = self._calculate_bbox()
+        self.filled = filled  # Whether this is a filled path (not stroked)
+        self.fill_rule = fill_rule  # SVG fill-rule (e.g., 'evenodd' for holes)
+        
+        # Calculate from primary path
+        if points is not None:
+            self.length = self._calculate_length()
+            self.bbox = self._calculate_bbox()
+        elif paths and len(paths) > 0:
+            self.points = np.array(paths[0]['points'])
+            self.length = self._calculate_length()
+            self.bbox = self._calculate_bbox()
+        else:
+            self.length = 0.0
+            self.bbox = (0, 0, 0, 0)
     
     def _calculate_length(self) -> float:
         """Calculate total stroke length"""

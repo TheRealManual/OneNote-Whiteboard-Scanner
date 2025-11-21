@@ -29,7 +29,7 @@ except ImportError:
     ONNX_AVAILABLE = False
 
 try:
-    from skimage.morphology import skeletonize, remove_small_objects
+    from skimage.morphology import skeletonize, remove_small_objects, medial_axis
     SKIMAGE_AVAILABLE = True
 except ImportError:
     SKIMAGE_AVAILABLE = False
@@ -66,7 +66,7 @@ else:
         "vectorize": {
             "skeletonize": True,
             "gap_close_px": 4,
-            "rdp_epsilon_px": 1.0,
+            "rdp_epsilon_px": 0.2,  # Much lower for smooth curves at 2560x2560 resolution
             "stroke_width_px": 2.5,
             "transparent_bg": True
         }
@@ -203,6 +203,14 @@ class HybridStrokeExtractor:
         logger.info(f"Stroke mask shape: {stroke_mask.shape}")
         logger.info(f"Stroke mask dtype: {stroke_mask.dtype}")
         logger.info(f"Non-zero pixels in mask: {np.count_nonzero(stroke_mask)}")
+        
+        # Save mask for debugging
+        try:
+            debug_path = Path(__file__).parent.parent / 'debug_mask.png'
+            cv2.imwrite(str(debug_path), stroke_mask)
+            logger.info(f"Saved debug mask to: {debug_path}")
+        except Exception as e:
+            logger.warning(f"Could not save debug mask: {e}")
         
         # Step 4: Vectorize
         logger.info("="*60)
@@ -709,58 +717,199 @@ class HybridStrokeExtractor:
         
         logger.info(f"Vectorizing mask: {mask.shape}")
         
-        # Skeletonize if enabled
-        if cfg.get('skeletonize', True) and SKIMAGE_AVAILABLE:
-            logger.info("Skeletonizing mask...")
-            skel = skeletonize(mask > 0)
-            mask = (skel * 255).astype(np.uint8)
-            logger.info(f"After skeletonization: {np.count_nonzero(mask)} pixels")
-        else:
-            logger.info("Skeletonization disabled or skimage not available")
-        
-        # Find contours
-        logger.info("Finding contours...")
-        contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-        logger.info(f"Found {len(contours)} contours")
+        # Use connected components to separate individual strokes
+        # We process the original mask, not an eroded version, to preserve stroke details
+        logger.info("Finding connected components...")
+        num_labels, labels, stats, centroids = cv2.connectedComponentsWithStats(mask, connectivity=8)
+        logger.info(f"Found {num_labels - 1} connected components (excluding background)")
         
         strokes = []
         min_stroke_length = cfg.get('min_stroke_length_px', 0)
+        min_area = cfg.get('min_area_px', 0)
         
-        for i, contour in enumerate(contours):
-            # Simplify with RDP
-            epsilon = cfg.get('rdp_epsilon_px', 1.0)
-            approx = cv2.approxPolyDP(contour, epsilon, False)
+        # Process each component separately
+        for label_id in range(1, num_labels):  # Skip 0 (background)
+            # Extract this component's mask from ORIGINAL mask (not eroded)
+            component_mask = (labels == label_id).astype(np.uint8) * 255
             
-            if len(approx) < 2:
-                logger.info(f"  Contour {i+1}: Skipped (too few points: {len(approx)})")
+            # Check minimum area
+            area = stats[label_id, cv2.CC_STAT_AREA]
+            if min_area > 0 and area < min_area:
+                logger.info(f"  Component {label_id}: Skipped (area {area} < {min_area})")
                 continue
             
-            # Filter by stroke length
-            if min_stroke_length > 0:
-                points = approx.reshape(-1, 2)
-                stroke_length = sum(np.linalg.norm(points[i] - points[i-1]) for i in range(1, len(points)))
-                if stroke_length < min_stroke_length:
-                    logger.info(f"  Contour {i+1}: Skipped (length {stroke_length:.1f}px < {min_stroke_length}px)")
+            # For very small components (dots, small marks), use centroid as a point
+            # Don't skeletonize tiny components as they'll disappear
+            if area < 50:  # Very small component (like dot on 'i')
+                cx, cy = centroids[label_id]
+                points = np.array([[int(cx), int(cy)]])
+                
+                # Estimate width from area (assume circular dot)
+                estimated_width = max(3.0, np.sqrt(area / np.pi) * 2)
+                
+                color = cfg.get('colorize_from_source') and self._get_stroke_color(points, img) or '#000000'
+                
+                logger.info(f"  Component {label_id}: Small dot/mark at ({int(cx)}, {int(cy)}), area={area}, width={estimated_width:.1f}")
+                
+                strokes.append({
+                    'points': points.tolist(),
+                    'color': color,
+                    'width': estimated_width
+                })
+                continue
+            
+            # Calculate stroke width BEFORE skeletonization using ORIGINAL component
+            # Use distance transform to find average width
+            dist_transform = cv2.distanceTransform(component_mask, cv2.DIST_L2, 5)
+            avg_width = np.mean(dist_transform[dist_transform > 0]) * 2  # Multiply by 2 for full width
+            stroke_width = max(2.5, min(avg_width, 20.0))  # Clamp between 2.5 and 20 pixels
+            
+            # Check if we should use contour centerline (preserves hollow shapes like zeros)
+            if cfg.get('use_contour_centerline', False):
+                # Smooth the component mask to reduce pixelation and noise
+                smoothed_mask = cv2.GaussianBlur(component_mask, (5, 5), 1.0)
+                _, smoothed_mask = cv2.threshold(smoothed_mask, 127, 255, cv2.THRESH_BINARY)
+                
+                # Find ALL contours including holes (RETR_CCOMP gives hierarchy)
+                contours, hierarchy = cv2.findContours(smoothed_mask, cv2.RETR_CCOMP, cv2.CHAIN_APPROX_SIMPLE)
+                
+                # Collect all contour paths for this component (will use SVG fill-rule evenodd)
+                all_paths = []
+                epsilon = cfg.get('rdp_epsilon_px', 0.5)
+                
+                # Process each contour (both outer and inner holes)
+                # hierarchy[0][i] = [next, previous, first_child, parent]
+                # Outer contours have parent=-1, holes have parent>=0
+                for idx, contour in enumerate(contours):
+                    # Simplify contour
+                    approx = cv2.approxPolyDP(contour, epsilon, True)
+                    
+                    if len(approx) < 3:  # Need at least 3 points for a path
+                        continue
+                    
+                    points = approx.reshape(-1, 2)
+                    is_hole = hierarchy[0][idx][3] >= 0 if hierarchy is not None else False
+                    
+                    all_paths.append({
+                        'points': points.tolist(),
+                        'is_hole': is_hole
+                    })
+                    
+                    logger.info(f"  Component {label_id}: {'Hole' if is_hole else 'Outer'} contour with {len(approx)} points")
+                
+                if all_paths:
+                    colorize = cfg.get('colorize_from_source')
+                    color = self._get_stroke_color(np.array(all_paths[0]['points']), img) if colorize else '#000000'
+                    
+                    strokes.append({
+                        'paths': all_paths,  # Multiple paths with holes
+                        'color': color,
+                        'width': 0,  # 0 means filled path
+                        'filled': True,
+                        'fill_rule': 'evenodd'  # SVG will subtract holes automatically
+                    })
+                continue
+            
+            # For complex shapes (like "0" with line through it), try to detect and separate
+            # by checking if there are multiple distinct skeleton branches
+            if cfg.get('skeletonize', False) and SKIMAGE_AVAILABLE:
+                skel = skeletonize(component_mask > 0)
+                skel_mask = (skel * 255).astype(np.uint8)
+                
+                # Check if skeletonization removed everything
+                if np.count_nonzero(skel_mask) == 0:
+                    # Fall back to centroid
+                    cx, cy = centroids[label_id]
+                    points = np.array([[int(cx), int(cy)]])
+                    color = cfg.get('colorize_from_source') and self._get_stroke_color(points, img) or '#000000'
+                    strokes.append({
+                        'points': points.tolist(),
+                        'color': color,
+                        'width': stroke_width
+                    })
+                    logger.info(f"  Component {label_id}: Skeleton empty, using centroid, width={stroke_width:.1f}")
                     continue
+                
+                # Use connected components on the skeleton to find disconnected skeleton pieces
+                # This handles cases like "0" with line through it - they'll be separate after skeletonization
+                num_skel_labels, skel_labels, skel_stats, _ = cv2.connectedComponentsWithStats(skel_mask, connectivity=8)
+                
+                if num_skel_labels > 2:  # More than just background (0) and one component
+                    logger.info(f"  Component {label_id}: Skeleton has {num_skel_labels - 1} disconnected parts")
+                    
+                    # Process each disconnected skeleton part separately
+                    for skel_id in range(1, num_skel_labels):
+                        skel_part_mask = (skel_labels == skel_id).astype(np.uint8) * 255
+                        
+                        # Skip very small skeleton fragments (noise)
+                        if skel_stats[skel_id, cv2.CC_STAT_AREA] < 3:
+                            continue
+                        
+                        # Find contour of this skeleton part
+                        part_contours, _ = cv2.findContours(skel_part_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+                        
+                        for contour in part_contours:
+                            epsilon = cfg.get('rdp_epsilon_px', 1.0)
+                            approx = cv2.approxPolyDP(contour, epsilon, False)
+                            
+                            if len(approx) < 2:
+                                continue
+                            
+                            points = approx.reshape(-1, 2)
+                            if min_stroke_length > 0:
+                                stroke_length = sum(np.linalg.norm(points[i] - points[i-1]) for i in range(1, len(points)))
+                                if stroke_length < min_stroke_length:
+                                    continue
+                            
+                            colorize = cfg.get('colorize_from_source')
+                            color = self._get_stroke_color(points, img) if colorize else '#000000'
+                            
+                            logger.info(f"    Skeleton part {skel_id}: {len(approx)} points, width={stroke_width:.1f}")
+                            
+                            strokes.append({
+                                'points': points.tolist(),
+                                'color': color,
+                                'width': stroke_width
+                            })
+                    continue
+                
+                # Single connected skeleton - process normally
+                component_mask = skel_mask
             
-            # Extract color from original image
-            points = approx.reshape(-1, 2)
-            colorize = cfg.get('colorize_from_source')
-            logger.info(f"  Config colorize_from_source: {colorize}")
+            # Find contours of this component
+            contours, _ = cv2.findContours(component_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
             
-            if colorize:
-                color = self._get_stroke_color(points, img)
-            else:
-                color = '#000000'
-            
-            logger.info(f"  Contour {i+1}: {len(approx)} points, color={color}, "
-                       f"width={cfg.get('stroke_width_px', 2.5)}")
-            
-            strokes.append({
-                'points': points.tolist(),
-                'color': color,
-                'width': cfg.get('stroke_width_px', 2.5)
-            })
+            for contour in contours:
+                # Simplify with RDP
+                epsilon = cfg.get('rdp_epsilon_px', 1.0)
+                approx = cv2.approxPolyDP(contour, epsilon, False)
+                
+                if len(approx) < 2:
+                    continue
+                
+                # Filter by stroke length
+                points = approx.reshape(-1, 2)
+                if min_stroke_length > 0:
+                    stroke_length = sum(np.linalg.norm(points[i] - points[i-1]) for i in range(1, len(points)))
+                    if stroke_length < min_stroke_length:
+                        logger.info(f"  Component {label_id}: Skipped (length {stroke_length:.1f}px < {min_stroke_length}px)")
+                        continue
+                
+                # Extract color from original image
+                colorize = cfg.get('colorize_from_source')
+                
+                if colorize:
+                    color = self._get_stroke_color(points, img)
+                else:
+                    color = '#000000'
+                
+                logger.info(f"  Component {label_id}: {len(approx)} points, area={area}, width={stroke_width:.1f}, color={color}")
+                
+                strokes.append({
+                    'points': points.tolist(),
+                    'color': color,
+                    'width': stroke_width
+                })
         
         logger.info(f"Generated {len(strokes)} strokes")
         return strokes
