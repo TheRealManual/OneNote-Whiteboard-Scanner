@@ -23,9 +23,7 @@ local-ai-backend/onenote_config.json
 
 # Training data and models (moved to separate training repo)
 local-ai-backend/dataset/
-local-ai-backend/models/*.pt
 local-ai-backend/models/*.onnx
-local-ai-backend/models/training_history.json
 local-ai-backend/train_segmentation.py
 local-ai-backend/training_ui.py
 local-ai-backend/training_ui/
