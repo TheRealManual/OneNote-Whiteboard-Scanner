@@ -3,7 +3,7 @@ Tile-Aware Lightweight Segmentation
 Uses DeepLabV3-MobileNetV3 for stroke detection with smooth tiled inference
 
 PRODUCTION SETTINGS (must match training):
-- Tile size: 2560×2560 (W×H format: width, height)
+- Tile size: 3712×2784 (W×H format: width, height) - native camera resolution
 - Overlap: 50% (default, smooth Gaussian blending)
 - Normalization: ImageNet (mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
 - Classes: 2 (background=0, stroke=1)
@@ -110,9 +110,9 @@ class TileSegmentation:
                 logger.info(f"Model: {model_path.name}")
             
             self.enabled = True
-            # IMPORTANT: Use same resolution as training/testing (2560×2560 for maximum detail)
-            # Model trained at 2560×2560 for ultimate small stroke detection
-            self.input_size = (2560, 2560)  # Model input size (W, H)
+            # IMPORTANT: Use same resolution as training/testing (3712×2784 for full detail)
+            # Model trained at native camera resolution - zero detail loss
+            self.input_size = (3712, 2784)  # Model input size (W, H)
             
         except Exception as e:
             logger.error(f"Failed to initialize tile segmentation: {e}")
